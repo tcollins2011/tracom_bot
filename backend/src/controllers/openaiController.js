@@ -12,7 +12,7 @@ exports.generateText = async (req, res) => {
       });
   
       // Send the response back to the client
-      res.json(response.choices[0]);
+      res.json(response);
     } catch (error) {
       console.error('Error calling OpenAI API:', error);
       res.status(500).json({ message: 'Error processing your request' });

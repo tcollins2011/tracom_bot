@@ -6,8 +6,8 @@
       </div>
       <nav class="nav-links">
         <ul>
-          <li><router-link to="/">Link</router-link></li>
-          <li><router-link to="/about">Link</router-link></li>
+          <li><router-link to="/">Home</router-link></li>
+          <li><router-link to="/detailed-analysis">Detailed View</router-link></li>
           <!-- Add more navigation links here -->
         </ul>
       </nav>

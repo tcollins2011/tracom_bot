@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/home.vue'; // Import your component
+import Detailed from '@/views/detailed-view.vue';
 
 const routes = [
   {
@@ -7,7 +8,11 @@ const routes = [
     name: 'Home',
     component: Home,
   },
-  // Add more routes here
+  {
+    path: '/detailed-analysis',
+    name: 'detailed',
+    component: Detailed,
+  },
 ];
 
 const router = createRouter({

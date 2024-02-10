@@ -49,8 +49,16 @@
             });
 
             // Assuming the API returns the generated text in response.data.text
-            const botResponse = response.data.message.content;
+            const botResponse = response.data.choices[0].message.content;
+            console.log(response)
             this.addMessage(botResponse, 'Bot');
+            // After receiving the API response
+            this.$emit('apiResponse', {
+              tokensUsed: response.data.usage.total_tokens,
+              // cost: calculateCost(response.data.usage.total_tokens),
+              // Include other details from the response as needed
+            });
+
           } catch (error) {
             console.error('Error calling the backend API:', error);
             // Handle the error appropriately
