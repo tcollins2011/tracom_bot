@@ -26,17 +26,19 @@
 </template>
   
   <script>
+  import axios from 'axios';
+
   export default {
     name: 'UserInputDisplay',
     data() {
       return {
-        messages: [],
+        messages: [], // Holds Messages 
         userInput: '', // To capture user input
       };
     },
     methods: {
-        submitText() {
-            if (this.userInput.trim()) {
+        async submitText() {
+          if (this.userInput.trim()) {
             this.messages.push({
                 text: this.userInput,
                 sender: 'You',
