@@ -7,7 +7,7 @@ exports.generateText = async (req, res) => {
   
     try {
       const response = await openai.chat.completions.create({
-        messages: [{ role: "system", content: "You are a helpful assistant." }],
+        messages: [{ role: "system", content: prompt }],
         model: "gpt-3.5-turbo",
       });
   

@@ -37,16 +37,37 @@
       };
     },
     methods: {
-        async submitText() {
-          if (this.userInput.trim()) {
-            this.messages.push({
-                text: this.userInput,
-                sender: 'You',
-                img: require('@/assets/tracom_profile.png'),
+      async submitText() {
+        if (this.userInput.trim()) {
+          // Add the user message to the display
+          this.addMessage(this.userInput, 'You');
+
+          // Call the backend API
+          try {
+            const response = await axios.post('http://localhost:3000/api/openai/generate-text', {
+              prompt: this.userInput,
             });
-            this.userInput = ''; // Clear the input field after submission
-            }
-        },
+
+            // Assuming the API returns the generated text in response.data.text
+            const botResponse = response.data.message.content;
+            this.addMessage(botResponse, 'Bot');
+          } catch (error) {
+            console.error('Error calling the backend API:', error);
+            // Handle the error appropriately
+            this.addMessage('Sorry, something went wrong.', 'Bot');
+          }
+
+          // Clear the user input field
+          this.userInput = '';
+        }
+      },
+      addMessage(text, sender) {
+        this.messages.push({
+          text: text,
+          sender: sender,
+          img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'), // Adjust paths as needed
+        });
+      },
       autoExpand(event) {
         const textarea = event.target;
         textarea.style.height = 'auto'; // Reset height to recalculate
