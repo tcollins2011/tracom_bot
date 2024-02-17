@@ -1,5 +1,6 @@
 <template>
     <div class="chat-with-details">
+      <ModelSettings class="settings-container"></ModelSettings>  
       <div class="chat-container">
         <Chatbot @apiResponse="handleApiResponse" />
       </div>
@@ -15,15 +16,19 @@
   
   <script>
   import Chatbot from '@/components/ChatBot.vue';
+  import ModelSettings from '@/components/ModelSettings.vue'
   
   export default {
     components: {
+      ModelSettings,
       Chatbot,
     },
     data() {
       return {
         apiDetails: {
-          tokensUsed: 0,
+          totalTokensUsed: 0,
+          inputTokens: 0,
+          outputTokens: 0,
           cost: 0,
           // Include other details here
         },
@@ -43,14 +48,21 @@
   <style>
   .chat-with-details {
     display: flex;
+    margin-top: 120px;
+    align-self: flex-start;
   }
   
+  .settings-container {
+    flex: 0 0 20%; /* Adjust the width of the settings container as needed */
+  }
   .chat-container {
-    flex: 1;
+    flex: 0 0 60%;
   }
   
   .details-container {
-    flex: 1;
+    flex: 0 0 20%;
+    padding-left: 20px;
   }
+
   </style>
   

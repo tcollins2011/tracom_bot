@@ -14,7 +14,7 @@
           <textarea
             ref="userInput"
             v-model="userInput"
-            placeholder="Enter your text here"
+            placeholder="Message TracomGPT..."
             class="user-input"
             @keyup.enter.prevent="submitText"
             @input="autoExpand"
@@ -27,6 +27,7 @@
   
   <script>
   import axios from 'axios';
+  import estimateCost from '@/utils/costEstimator';
 
   export default {
     name: 'UserInputDisplay',
@@ -50,12 +51,14 @@
 
             // Assuming the API returns the generated text in response.data.text
             const botResponse = response.data.choices[0].message.content;
-            console.log(response)
             this.addMessage(botResponse, 'Bot');
             // After receiving the API response
             this.$emit('apiResponse', {
+              model: response.data.model,
+              promptTokens: response.data.usage.prompt_tokens,
+              modelTokens: response.data.usage.completion_tokens,
               tokensUsed: response.data.usage.total_tokens,
-              // cost: calculateCost(response.data.usage.total_tokens),
+              cost: estimateCost(response.data.model,response.data.usage.prompt_tokens, response.data.usage.completion_tokens),
               // Include other details from the response as needed
             });
 
