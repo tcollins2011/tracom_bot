@@ -1,16 +1,16 @@
 <template>
     <div class="chat-with-details">
-      <ModelSettings class="settings-container"></ModelSettings>  
-      <div class="chat-container">
-        <Chatbot @apiResponse="handleApiResponse" />
-      </div>
-      <div class="details-container">
+        <div class="details-container">
         <h2>API Call Details</h2>
         <p>Tokens Used: {{ apiDetails.tokensUsed }}</p>
         <p>Cost: {{ apiDetails.cost }}</p>
         <p>Total Cost: {{ totalCost }}</p>
         <!-- Display other info as needed -->
       </div>
+      <div class="chat-container">
+        <Chatbot @apiResponse="handleApiResponse" />
+      </div>
+      <ModelSettings class="settings-container"></ModelSettings>  
     </div>
   </template>
   
@@ -53,15 +53,16 @@
   }
   
   .settings-container {
-    flex: 0 0 20%; /* Adjust the width of the settings container as needed */
+    /* flex: 0 0 20%; */
   }
   .chat-container {
-    flex: 0 0 60%;
+    flex-grow: 1;
   }
   
   .details-container {
-    flex: 0 0 20%;
+    /* flex: 0 0 10%; */
     padding-left: 20px;
+    min-width: 200px;
   }
 
   </style>

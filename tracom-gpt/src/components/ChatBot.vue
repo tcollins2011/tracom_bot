@@ -98,7 +98,7 @@
   }
   .display-text {
     width: 100%;
-    height: 300px; /* Adjust based on your needs */
+    height: 70vh; /* Adjust based on your needs */
     padding: 0.5rem;
     border: 1px solid #ccc;
     box-sizing: border-box; /* Ensures padding does not affect overall dimensions */
