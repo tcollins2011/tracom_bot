@@ -25,9 +25,8 @@
     </div>
 </template>
   
-  <script>
-  import axios from 'axios';
-  import estimateCost from '@/utils/costEstimator';
+<script>
+  // import estimateCost from '@/utils/costEstimator';
 
   export default {
     name: 'UserInputDisplay',
@@ -43,25 +42,48 @@
           // Add the user message to the display
           this.addMessage(this.userInput, 'You');
 
+          // Initialize an empty message for the bot response
+          const botMessageIndex = this.addMessage('', 'Bot');
+
           // Call the backend API
           try {
-            const response = await axios.post('http://localhost:3000/api/openai/generate-text', {
-              prompt: this.userInput,
+            const response = await fetch('http://localhost:3000/api/openai/generate-text', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ prompt: this.userInput }),
             });
 
-            // Assuming the API returns the generated text in response.data.text
-            const botResponse = response.data.choices[0].message.content;
-            this.addMessage(botResponse, 'Bot');
-            // After receiving the API response
-            this.$emit('apiResponse', {
-              model: response.data.model,
-              promptTokens: response.data.usage.prompt_tokens,
-              modelTokens: response.data.usage.completion_tokens,
-              tokensUsed: response.data.usage.total_tokens,
-              cost: estimateCost(response.data.model,response.data.usage.prompt_tokens, response.data.usage.completion_tokens),
-              // Include other details from the response as needed
-            });
+            const reader = response.body.getReader();
+            // let total = '';
 
+            // Function to read and process each chunk of data
+            const read = async () => {
+              const { done, value } = await reader.read();
+              if (done) {
+                // All data has been read
+                console.log('Stream finished');
+                this.$emit('apiResponse', {
+                  // You might need a different approach to get these details,
+                  // as they won't be available until the entire response is received
+                });
+                return;
+              }
+
+              // Convert the Uint8Array to a string and append to the total response
+              const textChunk = new TextDecoder().decode(value);
+              // total += textChunk;
+
+              // Update the bot's message with the new chunk
+              this.messages[botMessageIndex].text += textChunk;
+
+              // Read the next chunk
+              read();
+            };
+
+            // Start reading the stream
+            read();
           } catch (error) {
             console.error('Error calling the backend API:', error);
             // Handle the error appropriately
@@ -73,11 +95,14 @@
         }
       },
       addMessage(text, sender) {
-        this.messages.push({
+        const message = {
           text: text,
           sender: sender,
-          img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'), // Adjust paths as needed
-        });
+          img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'),
+        };
+        this.messages.push(message);
+        // Return the index of the newly added message
+        return this.messages.length - 1;
       },
       autoExpand(event) {
         const textarea = event.target;
@@ -89,9 +114,9 @@
       }
     },
   };
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   .user-input-display {
     width: 100%;
     margin: 0 auto;
