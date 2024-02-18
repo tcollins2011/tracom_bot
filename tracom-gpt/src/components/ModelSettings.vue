@@ -43,7 +43,7 @@
         settings: {
           model: 'gpt-3.5-turbo',
           temperature: 1,
-          maxTokens: 256,
+          maxTokens: 4096,
           topP: 1,
           frequencyPenalty: 0,
           presencePenalty: 0,

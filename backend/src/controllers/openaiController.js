@@ -7,10 +7,17 @@ const openai = new OpenAI({
 exports.generateText = async (req, res) => {
     const { prompt, settings } = req.body;
 
+    const instructionMessage = {
+      role: "system",
+      content: "You are a helpful AI assistant who is very knowledgable about the Tracom Corporation. If you don't know the answer, just say you don't know. DO NOT try to make up an answer."
+    };   
+
     try {
       const response = await openai.chat.completions.create({
         model: settings.model,
-        messages: [{ role: "system", content: prompt }],
+        messages: [
+          instructionMessage,
+          { role: "user", content: prompt }],
         stream: true,
         temperature: parseFloat(settings.temperature),
         max_tokens: parseInt(settings.maxTokens),
