@@ -8,9 +8,9 @@
         <!-- Display other info as needed -->
       </div>
       <div class="chat-container">
-        <Chatbot @apiResponse="handleApiResponse" />
+        <Chatbot :modelSettings="currentSettings" @apiResponse="handleApiResponse" />
       </div>
-      <ModelSettings class="settings-container"></ModelSettings>  
+      <ModelSettings @settingsChanged="handleSettingsChange" class="settings-container"></ModelSettings>  
     </div>
   </template>
   
@@ -33,6 +33,14 @@
           // Include other details here
         },
         totalCost: 0,
+        currentSettings: {
+          model: 'gpt-3.5-turbo',
+          temperature: 1,
+          maxTokens: 256,
+          topP: 1,
+          frequencyPenalty: 0,
+          presencePenalty: 0,
+        }
       };
     },
     methods: {
@@ -40,6 +48,9 @@
         this.apiDetails = details;
         this.totalCost += details.cost;
         // Update other details as needed
+      },
+      handleSettingsChange(newSettings) {
+        this.currentSettings = newSettings
       },
     },
   };

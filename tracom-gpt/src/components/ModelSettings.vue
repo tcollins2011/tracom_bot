@@ -31,7 +31,7 @@
     </div>
   </template>
   
-  <script>
+<script>
   import Tooltip from './TooltipAria.vue'
 
   export default {
@@ -59,6 +59,14 @@
         tooltipPosition: { left: 0, top: 0},
         tooltipContent: '',
       };
+    },
+    watch: {
+      settings: {
+        deep: true,
+        handler(newSettings) {
+          this.$emit('settingsChanged',newSettings);
+        }
+      }
     },
     methods: {
       handleMouseOver(event, description) {

@@ -5,19 +5,18 @@ const openai = new OpenAI({
 });
 
 exports.generateText = async (req, res) => {
-    const { prompt } = req.body;
-  
+    const { prompt, settings } = req.body;
+
     try {
       const response = await openai.chat.completions.create({
-        // model: "gpt-3.5-turbo",
-        model: "gpt-4-turbo-preview",
+        model: settings.model,
         messages: [{ role: "system", content: prompt }],
         stream: true,
-        temperature: 1,
-        max_tokens: 1000,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
+        temperature: parseFloat(settings.temperature),
+        max_tokens: parseInt(settings.maxTokens),
+        top_p: parseFloat(settings.topP),
+        frequency_penalty: parseFloat(settings.frequencyPenalty),
+        presence_penalty: parseFloat(settings.presencePenalty),
       });
       console.log(response)
       res.writeHead(200, {

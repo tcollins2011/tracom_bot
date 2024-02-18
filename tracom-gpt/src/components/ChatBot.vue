@@ -30,6 +30,20 @@
 
   export default {
     name: 'UserInputDisplay',
+    props: ['modelSettings'],
+    // props: {
+    //   modelSettings: {
+    //     type: Object,
+    //     default: () => ({
+    //       model: 'gpt-4-turbo-preview',
+    //       temperature: 1,
+    //       maxTokens: 4096,
+    //       topP: 1,
+    //       frequencyPenalty: 0,
+    //       presencePenalty: 0,
+    //     })
+    //   }
+    // },
     data() {
       return {
         messages: [], // Holds Messages 
@@ -52,7 +66,7 @@
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ prompt: this.userInput }),
+              body: JSON.stringify({ prompt: this.userInput, settings: this.modelSettings }),
             });
 
             const reader = response.body.getReader();
@@ -62,8 +76,6 @@
             const read = async () => {
               const { done, value } = await reader.read();
               if (done) {
-                // All data has been read
-                console.log('Stream finished');
                 this.$emit('apiResponse', {
                   // You might need a different approach to get these details,
                   // as they won't be available until the entire response is received
