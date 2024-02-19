@@ -1,0 +1,3 @@
+exports.generateEmbedding = async (text) => {
+
+};

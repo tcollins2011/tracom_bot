@@ -1,11 +1,9 @@
-// src/api/openai.js
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-// Import the controller
-const { generateText } = require('../controllers/openaiController');
+import { generateText } from '../controllers/openaiController.js'; // Ensure to use the .js extension
 
 // Route to handle OpenAI requests
 router.post('/generate-text', generateText);
 
-module.exports = router;
+export default router;
