@@ -18,7 +18,6 @@
           left: `${this.position.left}px`,
           top: `${this.position.top}px`,
           maxWidth: '240px',
-          // Additional styles...
         };
       },
     },
@@ -35,7 +34,7 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     padding: 20px;
-    z-index: 100;
+    z-index: 1001;
     box-shadow: 0 4px 6px rgba(0.1, 0.2, 0.2, 0.5); 
     transition: opacity 0.3s ease-in-out; 
   }

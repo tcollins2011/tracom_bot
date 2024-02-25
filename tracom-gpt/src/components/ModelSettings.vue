@@ -1,4 +1,3 @@
-<!-- src/components/ModelSettings.vue -->
 <template>
     <div class="settings-panel">
       <div class="setting">

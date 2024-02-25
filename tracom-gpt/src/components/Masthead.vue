@@ -28,6 +28,7 @@
     background-color: #003651;
     color: #fff;
     padding: 1rem;
+    height: 7vh;
     width:100%;
     box-sizing: border-box; /* Ensure padding doesn't affect the total width */
     margin: 0 auto; /* Center the masthead if there's any horizontal margin */
@@ -42,7 +43,7 @@
   }
   
   .logo {
-    height: 50px; /* Adjust based on your logo's size */
+    height: 4vh; /* Adjust based on your logo's size */
   }
   
   .nav-links ul {

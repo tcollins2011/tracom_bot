@@ -1,27 +1,27 @@
 <template>
-    <div class="chat-with-details">
-        <div class="details-container">
-        <h2>API Call Details</h2>
-        <p>Tokens Used: {{ apiDetails.tokensUsed }}</p>
-        <p>Cost: {{ apiDetails.cost }}</p>
-        <p>Total Cost: {{ totalCost }}</p>
-        <!-- Display other info as needed -->
-      </div>
-      <div class="chat-container">
-        <Chatbot :modelSettings="currentSettings" @apiResponse="handleApiResponse" />
-      </div>
-      <ModelSettings @settingsChanged="handleSettingsChange" class="settings-container"></ModelSettings>  
+  <div class="chat-with-details">
+    <div class="custom-prompt-container">
+      <CustomPrompt />
     </div>
-  </template>
+    <div class="chat-container">
+      <Chatbot :modelSettings="currentSettings" @apiResponse="handleApiResponse" />
+    </div>
+    <div class="model-settings-container">
+      <ModelSettings @settingsChanged="handleSettingsChange" />
+    </div>
+  </div>
+</template>
   
   <script>
   import Chatbot from '@/components/ChatBot.vue';
   import ModelSettings from '@/components/ModelSettings.vue'
+  import CustomPrompt from '@/components/CustomPrompt.vue'
   
   export default {
     components: {
       ModelSettings,
       Chatbot,
+      CustomPrompt,
     },
     data() {
       return {
@@ -56,25 +56,34 @@
   };
   </script>
   
-  <style>
+<style>
   .chat-with-details {
     display: flex;
-    margin-top: 120px;
-    align-self: flex-start;
-  }
-  
-  .settings-container {
-    /* flex: 0 0 20%; */
-  }
-  .chat-container {
-    flex-grow: 1;
-  }
-  
-  .details-container {
-    /* flex: 0 0 10%; */
+    margin-top: 10vh;
+    align-items: stretch; 
+    gap: 20px;
+    max-width: 100vw;
     padding-left: 20px;
-    min-width: 200px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    height: 88vh;
   }
-
-  </style>
+  
+  .custom-prompt-container {
+    flex: 0 0 20%; 
+    min-width: 0;
+  }
+  
+  .chat-container {
+    flex: 4;
+    min-width: 0;
+  }
+  
+  .model-settings-container {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 300px
+  }
+  
+</style>
   

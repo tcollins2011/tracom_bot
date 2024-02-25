@@ -130,12 +130,15 @@
   
 <style scoped>
   .user-input-display {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    height: 100%;
     margin: 0 auto;
   }
   .display-text {
     width: 100%;
-    height: 70vh; /* Adjust based on your needs */
+    height: 100%; 
     padding: 0.5rem;
     border: 1px solid #ccc;
     box-sizing: border-box; /* Ensures padding does not affect overall dimensions */

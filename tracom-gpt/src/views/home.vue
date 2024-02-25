@@ -37,6 +37,7 @@
 <style scoped>
 
 .home-chatBot{
+  height: 70vh;
   width: 60%;
   margin: 0 auto;
 }
