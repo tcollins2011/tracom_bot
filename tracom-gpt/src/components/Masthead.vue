@@ -6,7 +6,7 @@
       </div>
       <nav class="nav-links">
         <ul>
-          <li><router-link to="/">Home</router-link></li>
+          <li><router-link to="/">User View</router-link></li>
           <li><router-link to="/detailed-analysis">Detailed View</router-link></li>
           <!-- Add more navigation links here -->
         </ul>

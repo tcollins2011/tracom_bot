@@ -31,19 +31,6 @@
   export default {
     name: 'UserInputDisplay',
     props: ['modelSettings'],
-    // props: {
-    //   modelSettings: {
-    //     type: Object,
-    //     default: () => ({
-    //       model: 'gpt-4-turbo-preview',
-    //       temperature: 1,
-    //       maxTokens: 4096,
-    //       topP: 1,
-    //       frequencyPenalty: 0,
-    //       presencePenalty: 0,
-    //     })
-    //   }
-    // },
     data() {
       return {
         messages: [], // Holds Messages 
@@ -57,7 +44,7 @@
           this.addMessage(this.userInput, 'You');
 
           // Initialize an empty message for the bot response
-          const botMessageIndex = this.addMessage('', 'Bot');
+          const botMessageIndex = this.addMessage('', 'TracomGPT');
 
           // Call the backend API
           try {
@@ -98,11 +85,9 @@
             read();
           } catch (error) {
             console.error('Error calling the backend API:', error);
-            // Handle the error appropriately
             this.addMessage('Sorry, something went wrong.', 'Bot');
           }
 
-          // Clear the user input field
           this.userInput = '';
         }
       },
@@ -113,13 +98,11 @@
           img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'),
         };
         this.messages.push(message);
-        // Return the index of the newly added message
         return this.messages.length - 1;
       },
       autoExpand(event) {
         const textarea = event.target;
-        textarea.style.height = 'auto'; // Reset height to recalculate
-         // Only expand if the scrollHeight is greater than the current height
+        textarea.style.height = 'auto'; 
         if (textarea.scrollHeight > textarea.clientHeight) {
             textarea.style.height = textarea.scrollHeight + 'px';
         }
@@ -141,27 +124,27 @@
     height: 100%; 
     padding: 0.5rem;
     border: 1px solid #ccc;
-    box-sizing: border-box; /* Ensures padding does not affect overall dimensions */
-    resize: none; /* Prevents resizing of the textarea */
+    box-sizing: border-box; 
+    resize: none; 
     overflow-y: auto;
   }
 
   .message {
   display: flex;
-  align-items: flex-start; /* Align items to the start of the flex container */
-  margin-bottom: 1rem; /* Space between messages */
+  align-items: flex-start; 
+  margin-bottom: 1rem; 
 }
 
 .profile-pic {
-  width: 40px; /* Adjust based on your design */
-  height: 40px; /* Adjust based on your design */
-  border-radius: 50%; /* Make the image circular */
-  margin-right: 0.5rem; /* Space between the picture and the text */
+  width: 40px; 
+  height: 40px; 
+  border-radius: 50%; 
+  margin-right: 0.5rem; 
 }
 
 .message-info {
   display: flex;
-  flex-direction: column; /* Stack sender and text vertically */
+  flex-direction: column; 
   align-items: flex-start;
 }
 .sender {
@@ -171,13 +154,13 @@
 }
 
 .text{
-  text-align: left; /* Ensures multiline text is left-justified */
-  white-space: pre-wrap; /* Ensures line breaks and spaces are preserved */
+  text-align: left; 
+  white-space: pre-wrap; 
 }
   
   .input-wrapper {
   display: flex;
-  align-items: flex-end; /* Aligns button to the bottom */
+  align-items: flex-end; 
   border: 1px solid #ccc;
   border-radius: 4px;
   position: relative;
@@ -186,28 +169,28 @@
 .input-flex-container {
   flex-grow: 1;
   display: flex;
-  align-items: center; /* Centers the textarea vertically */
+  align-items: center; 
   padding: 0.5rem;
 }
 .user-input {
   width: 100%;
-  min-height: 20px; /* Initial minimum height */
+  min-height: 20px; 
   margin-top: 0.5rem;
   border: none;
   outline: none;
   background-color: transparent;
-  resize: none; /* Prevent manual resizing */
-  overflow-y: hidden; /* Hide vertical scrollbar */
+  resize: none; 
+  overflow-y: hidden; 
 }
 .submit-button {
-  margin-left: 0.5rem; /* Space between the button and the input text */
+  margin-left: 0.5rem; 
   margin-bottom: 1.25rem;
-  padding: 0.5rem 1rem; /*Adjust to match the input height */
+  padding: 0.5rem 1rem; 
   cursor: pointer;
-  background: url('@/assets/up-arrow.svg') no-repeat center center; /* Use your arrow icon */
+  background: url('@/assets/up-arrow.svg') no-repeat center center; 
   border: none;
   outline: none;
-  background-size: 50%; /* Adjust size as needed */
+  background-size: 50%; 
   
 }
 

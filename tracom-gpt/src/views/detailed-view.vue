@@ -8,6 +8,7 @@
     </div>
     <div class="model-settings-container">
       <ModelSettings @settingsChanged="handleSettingsChange" />
+      <RunningCosts/>
     </div>
   </div>
 </template>
@@ -16,12 +17,14 @@
   import Chatbot from '@/components/ChatBot.vue';
   import ModelSettings from '@/components/ModelSettings.vue'
   import CustomPrompt from '@/components/CustomPrompt.vue'
+  import RunningCosts from '@/components/RunningCosts.vue'
   
   export default {
     components: {
       ModelSettings,
       Chatbot,
       CustomPrompt,
+      RunningCosts,
     },
     data() {
       return {
@@ -80,8 +83,10 @@
   }
   
   .model-settings-container {
+    display: flex;
     flex: 0 1 auto;
-    min-width: 0;
+    flex-direction: column;
+    min-width: 250px;
     max-width: 300px
   }
   
