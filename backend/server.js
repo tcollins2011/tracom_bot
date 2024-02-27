@@ -25,7 +25,7 @@ app.use((err, req, res, next) => {
 });
 
 // Use the OpenAI routes with a specific base path
-app.use('/api/openai', openAIRoutes);
+app.use('/openai', openAIRoutes);
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
