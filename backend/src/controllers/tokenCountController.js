@@ -1,13 +1,18 @@
-import { getTokenCount, deleteTokenCount } from "../services/tokenCountsCacheService.js";
+import { encoding_for_model } from "tiktoken";
 
-export const tokenCount = (req,res) => {
-    const { cacheKey } = req.params;
-    const tokenCounts = getTokenCount(cacheKey);
+export const tokenCount = async (req,res) => {
 
-    if (tokenCounts) {
-        res.json(tokenCounts);
-        deleteTokenCount(cacheKey);
-    } else {
-        res.status(404).json({message: 'Token counts not found'});
-    }
+    const { input, output, settings } = req.body;
+    const enc = encoding_for_model(settings.model);
+
+    try {
+        let inputTokenCount = enc.encode(input).length
+        let outputTokenCount = enc.encode(output).length
+
+        res.json({inputTokens:inputTokenCount, outputTokens: outputTokenCount})
+
+    } catch (error) {
+        console.error('Error calling OpenAI API:', error);
+        res.status(500).json({ message: 'Error processing Tokencount' });
+    } 
 }

@@ -8,7 +8,7 @@
     </div>
     <div class="model-settings-container">
       <ModelSettings @settingsChanged="handleSettingsChange" />
-      <RunningCosts/>
+      <RunningCosts :lastSubmissionTokens="lastSubmissionTokens"/>
     </div>
   </div>
 </template>
@@ -18,6 +18,7 @@
   import ModelSettings from '@/components/ModelSettings.vue'
   import CustomPrompt from '@/components/CustomPrompt.vue'
   import RunningCosts from '@/components/RunningCosts.vue'
+  import estimateCost from '@/utils/costEstimator';
   
   export default {
     components: {
@@ -28,14 +29,12 @@
     },
     data() {
       return {
-        apiDetails: {
-          totalTokensUsed: 0,
+        lastSubmissionTokens: {
           inputTokens: 0,
           outputTokens: 0,
+          totalTokens: 0,
           cost: 0,
-          // Include other details here
         },
-        totalCost: 0,
         currentSettings: {
           model: 'gpt-3.5-turbo',
           temperature: 1,
@@ -43,14 +42,17 @@
           topP: 1,
           frequencyPenalty: 0,
           presencePenalty: 0,
+          chatEnabled: false,
+          embeddingsEnabled: true,
         }
       };
     },
     methods: {
       handleApiResponse(details) {
-        this.apiDetails = details;
-        this.totalCost += details.cost;
-        // Update other details as needed
+        this.lastSubmissionTokens.inputTokens = details.inputTokens;
+        this.lastSubmissionTokens.outputTokens = details.outputTokens;
+        this.lastSubmissionTokens.totalTokens = details.outputTokens + details.inputTokens
+        this.lastSubmissionTokens.cost = estimateCost( this.currentSettings.model, details.outputTokens, details.inputTokens)
       },
       handleSettingsChange(newSettings) {
         this.currentSettings = newSettings

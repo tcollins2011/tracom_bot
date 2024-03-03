@@ -22,6 +22,5 @@ function estimateCost(modelName,inputTokens, outputTokens) {
     return cost;
   }
   
-  // Export the function so it can be imported and used in other parts of the application.
   export default estimateCost;
   
