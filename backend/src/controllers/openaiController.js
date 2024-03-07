@@ -1,5 +1,6 @@
 import { OpenAI } from 'openai';
-
+import { embed } from '../services/embeddingService.js'
+import PineconeManager from '../services/pineconeService.js'
 let openai
 
 export const generateText = async (req, res) => {
@@ -10,12 +11,55 @@ export const generateText = async (req, res) => {
       })
     }
     
+    let instructionMessage
     const { prompt, settings, contextPrompt } = req.body;
+    
+    // On the frontend we want to create a new component to store the embedding info
+    // Have it be a collapsable dropdown at the bottom of a response
+    // Modify the prompt
+    // This special embedding component should only be used in the detailed vue
 
-    const instructionMessage = {
-      role: "system",
-      content: "You are a helpful AI assistant who is very knowledgable about Tracom. If you don't know the answer, just say that you don't know.. DO NOT try to make up an answer."
-    };
+    if (settings.embeddingsEnabled) {
+      try {
+        const embeddingResult = await embed(prompt);
+        const embedding = embeddingResult.data[0].embedding;
+        const pineconeManager = new PineconeManager('tracomgpt');
+        const contextEmbedding = await pineconeManager.queryEmbeddings(embedding,1);
+        if (contextEmbedding.matches[0].score > 0.6){
+          instructionMessage = {
+            role: "system",
+            content: `You are a helpful AI assistant who is very knoledgabel about Tracom. Use the following pieces of context to help answer the question at the end.
+            If you don't know the answer, just say you don't know. DO NOT try to make up an answer.
+            If the question is not related to the context or Tracom, politely respond that you can only answer questions about Tracom.
+            
+            ${contextEmbedding.matches[0].text}
+            
+            Question: ${prompt}
+            Helpful answer in markdown:
+            `
+          }
+        }
+        else {
+          instructionMessage = {
+            role: "system",
+            content: "You are a helpful AI assistant who is very knowledgable about Tracom. If you don't know the answer, just say that you don't know.. DO NOT try to make up an answer."
+          }
+        }
+      } catch (error) {
+        console.error('Error with embeddingsor Pinecone query', error);
+        // fall back message
+        instructionMessage = {
+          role: "system",
+          content: "Please provide more details for a better response."
+        };
+      }
+    } 
+    else {
+      instructionMessage = {
+        role: "system",
+        content: "You are a helpful AI assistant who is very knowledgable about Tracom. If you don't know the answer, just say that you don't know.. DO NOT try to make up an answer."
+      };
+    }
 
     try {
       const response = await openai.chat.completions.create({

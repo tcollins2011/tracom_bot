@@ -20,8 +20,8 @@ class PineconeManager {
 
     async queryEmbeddings(queryEmbeddings, topK) {
         try {
-            const response = await this.index.query(vector=queryEmbeddings, topK=topK);
-            console.log('Query response:', response);
+            const response = await this.index.query({topK: topK, vector: queryEmbeddings, includeMetadata: true});
+            // console.log('Query response:', response);
             return response;
         } catch (error) {
             console.error('Error querying embeddings:', error);
