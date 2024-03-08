@@ -1,6 +1,6 @@
 <template>
   <div class="user-input-display">
-    <div class="display-text">
+    <div class="display-text" ref="displayText">
       <div v-for="(message, index) in messages" :key="index" class="message">
         <div class="message-content">
           <img :src="message.img" alt="Profile Picture" class="profile-pic">
@@ -50,6 +50,12 @@ export default {
     systemMessage: {
       type: String,
       default: ""
+    }
+  },
+  updated() {
+    const displayTextElement = this.$refs.displayText;
+    if (displayTextElement) {
+      displayTextElement.scrollTop = displayTextElement.scrollHeight
     }
   },
   data() {
@@ -169,6 +175,11 @@ export default {
         embedding: "",
       };
       this.messages.push(message);
+
+      this.$nextTick(() => {
+        const container = this.$el.querySelector('.display-text');
+        container.scrollTop = container.scrollHeight
+      })
       return this.messages.length - 1;
     },
     autoExpand(event) {
@@ -199,6 +210,7 @@ export default {
     box-sizing: border-box; 
     resize: none; 
     overflow-y: auto;
+    scroll-behavior: smooth;
   }
 
   .message {

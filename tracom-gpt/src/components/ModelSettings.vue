@@ -59,7 +59,7 @@
     data() {
       return {
         settings: {
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4-turbo-preview',
           temperature: 1,
           maxTokens: 4096,
           topP: 1,
