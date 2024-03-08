@@ -15,7 +15,7 @@ export const generateText = async (req, res) => {
 
     if (settings.embeddingsEnabled) {
       instructionMessage = {
-        role: "user",
+        role: "system",
         content: `
           ${context}
           Reference: <${embedding}>     
@@ -24,7 +24,7 @@ export const generateText = async (req, res) => {
       }
     }  else {
       instructionMessage = {
-        role:"user",
+        role:"system",
         content: `
           ${context}
           Question: ${prompt}

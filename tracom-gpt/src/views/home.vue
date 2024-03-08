@@ -33,6 +33,7 @@
   height: 70vh;
   width: 60%;
   margin: 0 auto;
+  margin-top: 3em;
 }
 
 </style>
