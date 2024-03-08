@@ -14,6 +14,7 @@
 </template>
   
   <script>
+  import { mapGetters, mapMutations, mapState } from 'vuex'
   import Chatbot from '@/components/ChatBot.vue';
   import ModelSettings from '@/components/ModelSettings.vue'
   import CustomPrompt from '@/components/CustomPrompt.vue'
@@ -27,6 +28,10 @@
       CustomPrompt,
       RunningCosts,
     },
+    computed: {
+      ...mapState(['currentSettings']), 
+      ...mapGetters(['activePrompt']),
+    },
     data() {
       return {
         lastSubmissionTokens: {
@@ -35,19 +40,10 @@
           totalTokens: 0,
           cost: 0,
         },
-        currentSettings: {
-          model: 'gpt-3.5-turbo',
-          temperature: 1,
-          maxTokens: 256,
-          topP: 1,
-          frequencyPenalty: 0,
-          presencePenalty: 0,
-          chatEnabled: false,
-          embeddingsEnabled: true,
-        }
       };
     },
     methods: {
+      ...mapMutations(['toggleEmbeddingsEnabled']),
       handleApiResponse(details) {
         this.lastSubmissionTokens.inputTokens = details.inputTokens;
         this.lastSubmissionTokens.outputTokens = details.outputTokens;
@@ -55,7 +51,7 @@
         this.lastSubmissionTokens.cost = estimateCost( this.currentSettings.model, details.outputTokens, details.inputTokens)
       },
       handleSettingsChange(newSettings) {
-        this.currentSettings = newSettings
+        this.$store.commit('updateSettings', newSettings);
       },
     },
   };

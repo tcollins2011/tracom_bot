@@ -1,21 +1,27 @@
 <template>
     <div class="custom-prompt-container">
       <div class="prompt-label">System</div>
-      <textarea v-model="userPrompt" placeholder="Enter your custom prompt here..." @input="updatePrompt"></textarea>
+      <textarea v-model="userPrompt" :placeholder='activePrompt'></textarea>
     </div>
   </template>
   
 <script>
+  import { mapGetters, mapMutations } from 'vuex'
+  
   export default {
-    data() {
-      return {
-        userPrompt: '',
-      };
+    computed: {
+      ...mapGetters(['activePrompt']),
+      userPrompt: {
+        get() {
+          return this.$store.state.userPrompt;
+        },
+        set(value) {
+          this.updateUserPrompt(value);
+        }
+      }
     },
     methods: {
-      updatePrompt() {
-        this.$emit('updatePrompt', this.userPrompt);
-      },
+      ...mapMutations(['updateUserPrompt']),
     },
   };
 </script>
