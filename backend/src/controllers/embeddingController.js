@@ -10,7 +10,7 @@ export const relevantEmbedding = async (req,res) => {
         const embedding = embeddingResult.data[0].embedding;
         const pineconeManager = new PineconeManager('tracomgpt');
         const contextEmbedding = await pineconeManager.queryEmbeddings(embedding,1);
-        if (contextEmbedding.matches[0].score > 0.1){
+        if (contextEmbedding.matches[0].score > 0.3){
             res.json({
                 contextText: contextEmbedding.matches[0].metadata.text,
                 fileName: contextEmbedding.matches[0].metadata.fileName,

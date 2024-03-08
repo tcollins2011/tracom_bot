@@ -9,7 +9,7 @@
               <div class="text">{{ message.text }}</div>
           </div>
         </div>
-        <embedding-accordion v-if="message.sender === 'TracomGPT' && message.embedding && showAccordion" :embedding="message.embedding"></embedding-accordion>
+        <embedding-accordion v-if="message.sender === 'Social Style AI Assistant' && message.embedding && showAccordion" :embedding="message.embedding"></embedding-accordion>
       </div>
     </div>
     <div class="input-wrapper">
@@ -17,13 +17,15 @@
         <textarea
           ref="userInput"
           v-model="userInput"
-          placeholder="Message TracomGPT..."
+          placeholder="Ask your Social Style AI Assistant..."
           class="user-input"
           @keyup.enter.prevent="submitText"
           @input="autoExpand"
+          :disabled="isLoading"
         ></textarea>
+        <div v-if="isLoading" class="spinner"></div>
       </div>
-      <button class="submit-button" @click="submitText"></button>
+      <button v-if="!isLoading" class="submit-button" @click="submitText"></button>
     </div>
   </div>
 </template>
@@ -45,6 +47,10 @@ export default {
       type: Boolean,
       default: false, 
     },
+    systemMessage: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -52,17 +58,19 @@ export default {
       userInput: '',
       embeddingText: '',
       embeddingFile:'',
-      embeddingPage:'' 
+      embeddingPage:'',
+      isLoading: false, 
     };
   },
   methods: {
     async submitText() {
       if (this.userInput.trim()) {
-        
+        this.isLoading = true
         this.addMessage(this.userInput, 'You');
 
         // Initialize an empty message for the bot response
-        const botMessageIndex = this.addMessage('', 'TracomGPT');
+        const botMessageIndex = this.addMessage('', 'Social Style AI Assistant');
+        
 
         try {
 
@@ -78,7 +86,7 @@ export default {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ prompt: this.userInput, settings: this.modelSettings, embedding: this.embeddingText }),
+            body: JSON.stringify({ prompt: this.userInput, settings: this.modelSettings, embedding: this.embeddingText, context: this.systemMessage }),
           });
 
           const reader = response.body.getReader();
@@ -87,7 +95,8 @@ export default {
           const read = async () => {
             const { done, value } = await reader.read();
             if (done) {
-              const tokenInfo = await this.countTokens(this.userInput, this.messages[botMessageIndex].text, this.modelSettings)
+              const fullInput = this.userInput + this.embeddingText + this.systemMessage
+              const tokenInfo = await this.countTokens(fullInput, this.messages[botMessageIndex].text, this.modelSettings)
               this.$emit('apiResponse', {
                 inputTokens: tokenInfo.inputTokens,
                 outputTokens: tokenInfo.outputTokens
@@ -97,6 +106,7 @@ export default {
             const textChunk = new TextDecoder().decode(value);
 
             this.messages[botMessageIndex].text += textChunk;
+            // To Do: Process html in text for bolding
 
             await read();
 
@@ -111,6 +121,7 @@ export default {
         this.embeddingText = '';
         this.embeddingFile = '';
         this.embeddingPage = '';
+        this.isLoading = false
       }
     },
     async countTokens(inputText, outputText, modelSettings) {
@@ -144,7 +155,7 @@ export default {
           throw new Error('Network response was not ok');
         }
         const data = await response.json()
-        console.log(data)
+        
         return data
       } catch (error) {
           console.log(error)
@@ -166,6 +177,7 @@ export default {
       if (textarea.scrollHeight > textarea.clientHeight) {
           textarea.style.height = textarea.scrollHeight + 'px';
       }
+      // To Do: Autoscroll with the expand
     }
   },
 };
@@ -258,5 +270,26 @@ export default {
     border: none;
     outline: none;
     background-size: 50%; 
+  }
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #09f;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: spin 1s infinite linear;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: translateY(-50%) rotate(0deg);
+    }
+    100% {
+      transform: translateY(-50%) rotate(360deg);
+    }
   }
 </style>

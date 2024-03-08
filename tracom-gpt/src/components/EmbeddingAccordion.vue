@@ -10,11 +10,13 @@
 </template>
 
 <script>
+  // import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
+
   export default {
     name: 'EmbeddingAccordion',
     props: {
       embedding: {
-        type: Object,
+        type: String,
         required: true,
       },
     },

@@ -10,7 +10,7 @@ function estimateCost(modelName,inputTokens, outputTokens) {
 
     const prices = {
         'gpt-3.5-turbo' : {'input' : 0.0000005, 'output' : 0.0000015},
-        'gpt-4-0125-preview' : {'input' : 0.00001, 'output' : 0.00003}
+        'gpt-4-turbo-preview' : {'input' : 0.00001, 'output' : 0.00003}
     }
 
     if (!prices[modelName]) {
