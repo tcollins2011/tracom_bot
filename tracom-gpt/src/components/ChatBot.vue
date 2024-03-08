@@ -2,11 +2,14 @@
   <div class="user-input-display">
     <div class="display-text">
       <div v-for="(message, index) in messages" :key="index" class="message">
+        <div class="message-content">
           <img :src="message.img" alt="Profile Picture" class="profile-pic">
           <div class="message-info">
               <div class="sender">{{ message.sender }}</div>
               <div class="text">{{ message.text }}</div>
           </div>
+        </div>
+        <embedding-accordion v-if="message.sender === 'TracomGPT' && message.embedding && showAccordion" :embedding="message.embedding"></embedding-accordion>
       </div>
     </div>
     <div class="input-wrapper">
@@ -26,13 +29,30 @@
 </template>
 
 <script>
+import EmbeddingAccordion from './EmbeddingAccordion.vue';
+
 export default {
   name: 'UserInputDisplay',
-  props: ['modelSettings'],
+  components: {
+    EmbeddingAccordion,
+  },
+  props: {
+    modelSettings: {
+      type: Object,
+      required: true, 
+    },
+    showAccordion: {
+      type: Boolean,
+      default: false, 
+    },
+  },
   data() {
     return {
       messages: [], 
-      userInput: '', 
+      userInput: '',
+      embeddingText: '',
+      embeddingFile:'',
+      embeddingPage:'' 
     };
   },
   methods: {
@@ -45,12 +65,20 @@ export default {
         const botMessageIndex = this.addMessage('', 'TracomGPT');
 
         try {
+
+          if(this.modelSettings.embeddingsEnabled){
+            const embedding = await this.findEmbeddings(this.userInput, this.modelSettings)
+            this.embeddingFile = embedding.fileName;
+            this.embeddingPage = embedding.startPage;
+            this.embeddingText = embedding.contextText
+          }
+
           const response = await fetch('http://localhost:3000/openai/generate-text', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ prompt: this.userInput, settings: this.modelSettings }),
+            body: JSON.stringify({ prompt: this.userInput, settings: this.modelSettings, embedding: this.embeddingText }),
           });
 
           const reader = response.body.getReader();
@@ -74,12 +102,15 @@ export default {
 
           };
           await read();
-
+          this.messages[botMessageIndex].embedding += this.embeddingText
         } catch (error) {
           console.error('Error calling the backend API:', error);
           this.addMessage('Sorry, something went wrong.', 'Bot');
         }
         this.userInput = '';
+        this.embeddingText = '';
+        this.embeddingFile = '';
+        this.embeddingPage = '';
       }
     },
     async countTokens(inputText, outputText, modelSettings) {
@@ -100,11 +131,31 @@ export default {
           console.log(error)
       } 
     },
+    async findEmbeddings(inputText, modelSettings) {
+      try{
+        const response = await fetch('http://localhost:3000/openai/relevant-embedding', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ prompt: inputText, settings: modelSettings }),
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json()
+        console.log(data)
+        return data
+      } catch (error) {
+          console.log(error)
+      } 
+    },
     addMessage(text, sender) {
       const message = {
         text: text,
         sender: sender,
         img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'),
+        embedding: "",
       };
       this.messages.push(message);
       return this.messages.length - 1;
@@ -139,66 +190,73 @@ export default {
   }
 
   .message {
-  display: flex;
-  align-items: flex-start; 
-  margin-bottom: 1rem; 
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    margin-bottom: 1rem; 
+  }
+
+  .message-content {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
   }
 
   .profile-pic {
-  width: 40px; 
-  height: 40px; 
-  border-radius: 50%; 
-  margin-right: 0.5rem; 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    margin-right: 0.5rem; 
   }
 
   .message-info {
-  display: flex;
-  flex-direction: column; 
-  align-items: flex-start;
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start;
   }
   .sender {
-  font-weight: bold;
-  margin-bottom: 0.25rem;
-  margin-top: 0.7rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+    margin-top: 0.7rem;
   }
 
   .text{
-  text-align: left; 
-  white-space: pre-wrap; 
+    text-align: left; 
+    white-space: pre-wrap; 
   }
 
   .input-wrapper {
-  display: flex;
-  align-items: flex-end; 
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  position: relative;
+    display: flex;
+    align-items: flex-end; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
   }
 
   .input-flex-container {
-  flex-grow: 1;
-  display: flex;
-  align-items: center; 
-  padding: 0.5rem;
+    flex-grow: 1;
+    display: flex;
+    align-items: center; 
+    padding: 0.5rem;
   }
   .user-input {
-  width: 100%;
-  min-height: 20px; 
-  margin-top: 0.5rem;
-  border: none;
-  outline: none;
-  background-color: transparent;
-  resize: none; 
-  overflow-y: hidden; 
+    width: 100%;
+    min-height: 20px; 
+    margin-top: 0.5rem;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    resize: none; 
+    overflow-y: hidden; 
   }
   .submit-button {
-  margin-left: 0.5rem; 
-  margin-bottom: 1.25rem;
-  padding: 0.5rem 1rem; 
-  cursor: pointer;
-  background: url('@/assets/up-arrow.svg') no-repeat center center; 
-  border: none;
-  outline: none;
-  background-size: 50%; 
+    margin-left: 0.5rem; 
+    margin-bottom: 1.25rem;
+    padding: 0.5rem 1rem; 
+    cursor: pointer;
+    background: url('@/assets/up-arrow.svg') no-repeat center center; 
+    border: none;
+    outline: none;
+    background-size: 50%; 
   }
 </style>

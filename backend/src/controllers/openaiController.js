@@ -13,11 +13,6 @@ export const generateText = async (req, res) => {
     
     let instructionMessage
     const { prompt, settings, contextPrompt } = req.body;
-    
-    // On the frontend we want to create a new component to store the embedding info
-    // Have it be a collapsable dropdown at the bottom of a response
-    // Modify the prompt
-    // This special embedding component should only be used in the detailed vue
 
     if (settings.embeddingsEnabled) {
       try {

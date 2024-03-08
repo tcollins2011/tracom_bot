@@ -4,7 +4,7 @@
       <CustomPrompt />
     </div>
     <div class="chat-container">
-      <Chatbot :modelSettings="currentSettings" @apiResponse="handleApiResponse" />
+      <Chatbot :modelSettings="currentSettings" :show-accordion="true" @apiResponse="handleApiResponse" />
     </div>
     <div class="model-settings-container">
       <ModelSettings @settingsChanged="handleSettingsChange" />
