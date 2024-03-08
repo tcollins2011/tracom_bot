@@ -21,22 +21,18 @@
   <style scoped>
   .text-box-section {
     padding: 1.2rem;
-    background-color: #f0f0f0; /* Example background color */
+    background-color: #f0f0f0; 
   }
   
   .container {
-    max-width: 86%; /* Example max width */
+    max-width: 86%;
     margin: 0 auto;
   }
   
   h2 {
     margin-bottom: 1rem;
     margin-top: 2rem;
-    /* Additional styling for the title */
   }
   
-  p {
-    /* Styling for the paragraph/content */
-  }
   </style>
   

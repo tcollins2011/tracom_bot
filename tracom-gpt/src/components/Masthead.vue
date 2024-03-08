@@ -1,14 +1,12 @@
 <template>
     <header class="masthead">
       <div class="logo-container">
-        <!-- Assuming you have a logo image in your assets folder -->
         <img src="@/assets/logo_tracom.png" alt="Logo" class="logo" />
       </div>
       <nav class="nav-links">
         <ul>
           <li><router-link to="/">User View</router-link></li>
           <li><router-link to="/detailed-analysis">Detailed View</router-link></li>
-          <!-- Add more navigation links here -->
         </ul>
       </nav>
     </header>
@@ -30,20 +28,16 @@
     padding: 1rem;
     height: 7vh;
     width:100%;
-    box-sizing: border-box; /* Ensure padding doesn't affect the total width */
-    margin: 0 auto; /* Center the masthead if there's any horizontal margin */
-    position: fixed; /* Make the masthead fixed at the top */
+    box-sizing: border-box;
+    margin: 0 auto; 
+    position: fixed; 
     top: 0;
     left: 0;
-    z-index: 1000; /* Ensure it's above other content */
-  }
-  
-  .logo-container {
-    /* Adjustments if needed */
+    z-index: 1000; 
   }
   
   .logo {
-    height: 4vh; /* Adjust based on your logo's size */
+    height: 4vh; 
   }
   
   .nav-links ul {

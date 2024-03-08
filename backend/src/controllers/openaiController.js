@@ -18,8 +18,8 @@ export const generateText = async (req, res) => {
         role: "user",
         content: `
           ${context}
-          ${embedding}     
-          ${prompt}
+          Reference: <${embedding}>     
+          Question: ${prompt}
           `
       }
     }  else {
@@ -27,7 +27,7 @@ export const generateText = async (req, res) => {
         role:"user",
         content: `
           ${context}
-          ${prompt}
+          Question: ${prompt}
         `
       }
     }
