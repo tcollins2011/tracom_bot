@@ -6,7 +6,7 @@
           <img :src="message.img" alt="Profile Picture" class="profile-pic">
           <div class="message-info">
               <div class="sender">{{ message.sender }}</div>
-              <div class="text">{{ message.text }}</div>
+              <div class="text" v-html="processText(message.text)"></div>
           </div>
         </div>
         <embedding-accordion v-if="message.sender === 'Social Style AI Assistant' && message.embedding && showAccordion" :embedding="message.embedding"></embedding-accordion>
@@ -32,6 +32,7 @@
 
 <script>
 import EmbeddingAccordion from './EmbeddingAccordion.vue';
+import DOMPurify from 'dompurify';
 
 export default {
   name: 'UserInputDisplay',
@@ -112,7 +113,6 @@ export default {
             const textChunk = new TextDecoder().decode(value);
 
             this.messages[botMessageIndex].text += textChunk;
-            // To Do: Process html in text for bolding
 
             await read();
 
@@ -188,7 +188,10 @@ export default {
       if (textarea.scrollHeight > textarea.clientHeight) {
           textarea.style.height = textarea.scrollHeight + 'px';
       }
-      // To Do: Autoscroll with the expand
+    },
+    processText(text) {
+      const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      return DOMPurify.sanitize(html);
     }
   },
 };
