@@ -4,6 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import openAIRoutes from './src/api/openai.js';
 import pdfRoutes from './src/api/pdf.js';
 
