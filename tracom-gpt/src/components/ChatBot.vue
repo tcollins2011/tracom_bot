@@ -9,7 +9,7 @@
               <div class="text" v-html="processText(message.text)"></div>
           </div>
         </div>
-        <embedding-accordion v-if="message.sender === 'Social Style AI Assistant' && message.embedding && showAccordion" :embedding="message.embedding"></embedding-accordion>
+        <embedding-accordion v-if="message.sender === 'Social Style AI Assistant' && message.embedding.text && showAccordion" :embedding="message.embedding"></embedding-accordion>
       </div>
     </div>
     <div class="input-wrapper">
@@ -64,8 +64,9 @@ export default {
       messages: [], 
       userInput: '',
       embeddingText: '',
-      embeddingFile:'',
-      embeddingPage:'',
+      embeddingFile: '',
+      embeddingStartPage: '',
+      embeddingEndPage: '',
       isLoading: false, 
     };
   },
@@ -84,7 +85,8 @@ export default {
           if(this.modelSettings.embeddingsEnabled){
             const embedding = await this.findEmbeddings(this.userInput, this.modelSettings)
             this.embeddingFile = embedding.fileName;
-            this.embeddingPage = embedding.startPage;
+            this.embeddingStartPage = embedding.startPage;
+            this.embeddingEndPage = embedding.endPage;
             this.embeddingText = embedding.contextText
           }
 
@@ -118,7 +120,7 @@ export default {
 
           };
           await read();
-          this.messages[botMessageIndex].embedding += this.embeddingText
+          this.messages[botMessageIndex].embedding = {'file': this.embeddingFile, 'text': this.embeddingText, 'startPage': this.embeddingStartPage, 'endPage': this.embeddingEndPage}
         } catch (error) {
           console.error('Error calling the backend API:', error);
           this.addMessage('Sorry, something went wrong.', 'Bot');
@@ -126,7 +128,8 @@ export default {
         this.userInput = '';
         this.embeddingText = '';
         this.embeddingFile = '';
-        this.embeddingPage = '';
+        this.embeddingStartPage = '';
+        this.embeddingEndPage= '';
         this.isLoading = false
       }
     },
@@ -172,7 +175,7 @@ export default {
         text: text,
         sender: sender,
         img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'),
-        embedding: "",
+        embedding: {},
       };
       this.messages.push(message);
 

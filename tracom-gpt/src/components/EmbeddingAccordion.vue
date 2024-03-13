@@ -1,37 +1,77 @@
 <template>
   <div class="embedding-accordion">
     <div class="accordion-toggle" @click="toggleAccordion" :aria-expanded="isOpen.toString()">
-      <span> Expand Embedding</span>
+      <span>Expand Embedding</span>
     </div>
-    <div v-if="isOpen" class="accordion-content">
-      <div>{{ embedding }}</div>
+    <div v-if="isOpen" class="accordion-content" ref="pdfContainer">
     </div>
   </div>
 </template>
 
-<script>
-  // import { getDocument } from 'pdfjs-dist/legacy/build/pdf';
 
-  export default {
-    name: 'EmbeddingAccordion',
-    props: {
-      embedding: {
-        type: String,
-        required: true,
-      },
+<script>
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf';
+
+export default {
+  name: 'EmbeddingAccordion',
+  props: {
+    embedding: {
+      type: Object,
+      required: true,
     },
-    data() {
-      return {
-        isOpen: false,
-      };
+  },
+  data() {
+    return {
+      isOpen: false,
+    };
+  },
+  mounted() {
+    GlobalWorkerOptions.workerSrc = process.env.BASE_URL + 'pdf.worker.min.mjs';
+  },
+  methods: {
+    toggleAccordion() {
+      this.isOpen = !this.isOpen;
+      if (this.isOpen) {
+        this.loadAndRenderPDF();
+      }
     },
-    methods: {
-      toggleAccordion() {
-        this.isOpen = !this.isOpen;
-      },
+    async loadAndRenderPDF() {
+      const url = `http://localhost:3000/pdf/${this.embedding.file}`;
+      const pdf = await getDocument(url).promise;
+
+      // Reference to the container where canvases will be appended
+      const container = this.$refs.pdfContainer;
+
+      // Clear the container before rendering new pages
+      container.innerHTML = '';
+
+      for (let pageNum = this.embedding.startPage; pageNum <= this.embedding.endPage; pageNum++) {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-page-canvas';
+        const context = canvas.getContext('2d');
+
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 1.0 });
+
+        // Adjust the size of the canvas to the viewport dimensions
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport,
+        };
+
+        await page.render(renderContext).promise;
+
+        // Append the rendered canvas to the container
+        container.appendChild(canvas);
+      }
     },
-  };
+  },
+};
 </script>
+
 
 <style scoped>
   .embedding-accordion {
@@ -72,18 +112,18 @@
   }
 
   .accordion-content {
-    padding: 0.5rem;
-    background-color: #fff;
-    color: #333;
-    border-left: 1px solid #e0e0e0; 
-    border-right: 1px solid #e0e0e0; 
-    border-bottom: 1px solid #e0e0e0; 
-    font-family: 'Sohne', sans-serif;
-    font-size: clamp(12px, 1.5vh, 14px);  
+    overflow-y: auto;
+    max-height: 400px;
   }
 
   .accordion-content div {
     padding: 0.2rem 0; 
+  }
+
+  .pdf-viewer {
+    max-height: 500px; 
+    overflow: auto;
+    background-color: #fff; 
   }
 </style>
 

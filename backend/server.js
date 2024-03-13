@@ -4,7 +4,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import openAIRoutes from './src/api/openai.js'; 
+import openAIRoutes from './src/api/openai.js';
+import pdfRoutes from './src/api/pdf.js';  
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,8 +27,9 @@ app.use((err, req, res, next) => {
 
 // Use the OpenAI routes with a specific base path
 app.use('/openai', openAIRoutes);
+app.use('/pdf', pdfRoutes)
 
 app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+  console.log(`Server listening at ${port}`);
 });
 

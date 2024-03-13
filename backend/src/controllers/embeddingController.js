@@ -14,13 +14,15 @@ export const relevantEmbedding = async (req,res) => {
             res.json({
                 contextText: contextEmbedding.matches[0].metadata.text,
                 fileName: contextEmbedding.matches[0].metadata.fileName,
-                startPage: contextEmbedding.matches[0].metadata.startPage
+                startPage: contextEmbedding.matches[0].metadata.startPage,
+                endPage: contextEmbedding.matches[0].metadata.endPage,
             })
         } else {
             res.json({
                 contextText: '',
                 fileName: '',
-                startPage: ''
+                startPage: '',
+                endPage: ''
             })
         }
     } catch (error) {
