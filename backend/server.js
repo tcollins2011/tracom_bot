@@ -1,11 +1,13 @@
 import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import openAIRoutes from './src/api/openai.js';
-import pdfRoutes from './src/api/pdf.js';  
+import pdfRoutes from './src/api/pdf.js';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,9 +17,16 @@ app.use(helmet());
 app.use(morgan('tiny'));
 app.use(express.json());
 
+// Serve static files from the Vue app build directory
+app.use(express.static(path.join(__dirname, '../tracom-gpt/dist')));
+
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express backend!' });
 });
+
+// Use the OpenAI routes with a specific base path
+app.use('/openai', openAIRoutes);
+app.use('/pdf', pdfRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -25,11 +34,11 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
-// Use the OpenAI routes with a specific base path
-app.use('/openai', openAIRoutes);
-app.use('/pdf', pdfRoutes)
+// All non-API requests should be forwarded to the Vue app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+});
 
 app.listen(port, () => {
   console.log(`Server listening at ${port}`);
 });
-
