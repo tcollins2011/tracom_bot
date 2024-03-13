@@ -18,6 +18,8 @@ app.use(morgan('tiny'));
 app.use(express.json());
 
 // Serve static files from the Vue app build directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '../tracom-gpt/dist')));
 
 app.get('/', (req, res) => {
