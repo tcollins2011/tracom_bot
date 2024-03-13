@@ -10,7 +10,8 @@
     "transform": {}
   },
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
