@@ -90,7 +90,8 @@ export default {
             this.embeddingText = embedding.contextText
           }
 
-          const response = await fetch('http://localhost:3000/openai/generate-text', {
+          const baseUrl = process.env.VUE_APP_API_BASE_URL; 
+          const response = await fetch(`${baseUrl}/openai/generate-text`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -135,7 +136,8 @@ export default {
     },
     async countTokens(inputText, outputText, modelSettings) {
       try{
-        const response = await fetch('http://localhost:3000/openai/token-counts/', {
+        const baseUrl = process.env.VUE_APP_API_BASE_URL; 
+        const response = await fetch(`${baseUrl}/openai/token-counts/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -153,7 +155,8 @@ export default {
     },
     async findEmbeddings(inputText, modelSettings) {
       try{
-        const response = await fetch('http://localhost:3000/openai/relevant-embedding', {
+        const baseUrl = process.env.VUE_APP_API_BASE_URL; 
+        const response = await fetch(`${baseUrl}/openai/relevant-embedding`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
