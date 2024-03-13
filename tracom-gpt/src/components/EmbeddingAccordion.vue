@@ -36,7 +36,8 @@ export default {
       }
     },
     async loadAndRenderPDF() {
-      const url = `http://localhost:3000/pdf/${this.embedding.file}`;
+      const baseUrl = process.env.VUE_APP_API_BASE_URL; 
+      const url = `${baseUrl}/pdf/${this.embedding.file}`;
       const pdf = await getDocument(url).promise;
 
       // Reference to the container where canvases will be appended
