@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import openAIRoutes from './src/api/openai.js';
 import pdfRoutes from './src/api/pdf.js';
+import feedbackRoutes from './src/api/feedback.js';
 
 dotenv.config();
 
@@ -27,9 +28,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express backend!' });
 });
 
-// Use the OpenAI routes with a specific base path
+// Use the routes with a specific base path
 app.use('/openai', openAIRoutes);
 app.use('/pdf', pdfRoutes);
+app.use('/feedback', feedbackRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
