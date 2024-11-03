@@ -42,78 +42,124 @@
           <input type="checkbox" id="embeddingsEnabled" v-model="settings.embeddingsEnabled" class="toggle-switch">
         </div>
       </div>
-
+      <div v-if="settings.embeddingsEnabled" class="setting">
+        <label for="namespace"
+          @mouseover="handleMouseOver($event,'Select one or more namespaces to apply settings. Namespaces help in organizing and segregating data for specific contexts.')"
+          @mouseleave="handleMouseLeave">
+          Namespace
+        </label>
+        <select v-model="selectedNamespaces" id="namespace" multiple size="5">
+          <option v-for="namespace in settings.namespaces" 
+                  :key="namespace.id" 
+                  :value="namespace.id"
+                  :style="namespace.selected ? 'background-color: #4CAF50; color: white;' : ''"
+                  @mousedown.prevent="toggleNamespace(namespace)">
+            {{ namespace.id }}
+          </option>
+        </select>
+      </div>
       <Tooltip :visible="isTooltipVisible" :position="tooltipPosition">
         {{ tooltipContent }}
       </Tooltip>
     </div>
-  </template>
-  
-<script>
-  import Tooltip from './TooltipAria.vue'
+    </template>
+    
+  <script>
+    import Tooltip from './TooltipAria.vue'
 
-  export default {
-    components: {
-      Tooltip,
-    },
-    data() {
-      return {
+    export default {
+      components: {
+        Tooltip,
+      },
+      data() {
+        return {
+          settings: {
+            model: 'gpt-4-turbo-preview',
+            temperature: 1,
+            maxTokens: 4096,
+            topP: 1,
+            frequencyPenalty: 0,
+            presencePenalty: 0,
+            chatEnabled: false,
+            embeddingsEnabled: true,
+            namespaces: [     
+              { id: 'Character Overlap', selected: true },
+              { id: 'Random', selected: false },
+              { id: 'Natural Language Processing', selected: false },
+            ],
+          },
+          settingsList: [
+              { name: 'temperature', label: 'Temperature', type: 'number', min: 0, max: 2, step: 0.01, description: 'Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive.'},
+              { name: 'maxTokens', label: 'Max tokens', type: 'number', min: 1, max: 4096, step: 1, description: 'The maximum number of tokens to generate shared between the prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for standard English text.)' },
+              { name: 'topP', label: 'Top P', type: 'number', min: 0, max: 1, step: 0.01, description: 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.' },
+              { name: 'frequencyPenalty', label: 'Frequency penalty', type: 'number', min: 0, max: 2, step: 0.01, description: "How much to penalize new tokens based on their existing frequency in the text so far. Decreases the model's likelihood to repeat the same line verbatim."},
+              { name: 'presencePenalty', label: 'Presence penalty', type: 'number', min: 0, max: 2, step: 0.01, description: "How much to penalize new tokens based on whether they appear in the text so far. Increases the model's likelihood to talk about new topics."},
+          ],
+          isTooltipVisible: false,
+          tooltipPosition: { left: 0, top: 0},
+          tooltipContent: '',
+          availableNamespaces: ['1','2','3','4','5','6','7','8']
+        };
+      },
+      mounted() {
+        this.ensureAtLeastOneNamespaceSelected();
+      },
+      watch: {
         settings: {
-          model: 'gpt-4-turbo-preview',
-          temperature: 1,
-          maxTokens: 4096,
-          topP: 1,
-          frequencyPenalty: 0,
-          presencePenalty: 0,
-          chatEnabled: false,
-          embeddingsEnabled: true,
+          deep: true,
+          handler(newSettings) {
+            this.$emit('settingsChanged',newSettings);
+          }
+        }
+      },
+      computed: {
+        selectedNamespaces: {
+          get() {
+            return this.settings.namespaces.filter(namespace => namespace.selected).map(namespace => namespace.id);
+          },
+          set(value) {
+            this.settings.namespaces = this.availableNamespaces.map(id => ({ id, selected: value.includes(id) }));
+          }
+        }
+      },
+      methods: {
+        ensureAtLeastOneNamespaceSelected() {
+          if (!this.settings.namespaces.some(namespace => namespace.selected)) {
+            this.settings.namespaces[0].selected = true;
+          }
         },
-        settingsList: [
-            { name: 'temperature', label: 'Temperature', type: 'number', min: 0, max: 2, step: 0.01, description: 'Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive.'},
-            { name: 'maxTokens', label: 'Max tokens', type: 'number', min: 1, max: 4096, step: 1, description: 'The maximum number of tokens to generate shared between the prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for standard English text.)' },
-            { name: 'topP', label: 'Top P', type: 'number', min: 0, max: 1, step: 0.01, description: 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.' },
-            { name: 'frequencyPenalty', label: 'Frequency penalty', type: 'number', min: 0, max: 2, step: 0.01, description: "How much to penalize new tokens based on their existing frequency in the text so far. Decreases the model's likelihood to repeat the same line verbatim."},
-            { name: 'presencePenalty', label: 'Presence penalty', type: 'number', min: 0, max: 2, step: 0.01, description: "How much to penalize new tokens based on whether they appear in the text so far. Increases the model's likelihood to talk about new topics."},
-        ],
-        isTooltipVisible: false,
-        tooltipPosition: { left: 0, top: 0},
-        tooltipContent: '',
-      };
+        handleMouseOver(event, description) {
+          this.tooltipContent = description;
+
+          const elementRect = event.target.getBoundingClientRect();
+          const tooltipWidth = 280;
+          const gap = 20;
+
+          let leftPos = elementRect.left - tooltipWidth - gap;
+
+          if (leftPos < 0) {
+            leftPos = gap; 
+          }
+
+          const topPos = elementRect.top + window.scrollY + (elementRect.height / 2) - 50;
+
+          this.tooltipPosition = { left: leftPos, top: topPos };
+          this.isTooltipVisible = true;
+        },
+
+        handleMouseLeave() {
+          this.isTooltipVisible = false;
+        },
+        toggleNamespace(namespace) {
+          const selectedCount = this.settings.namespaces.filter(namespace => namespace.selected).length;
+          if (selectedCount === 1 && namespace.selected) {
+            return;
+          }
+          namespace.selected = !namespace.selected;
+        },
     },
-    watch: {
-      settings: {
-        deep: true,
-        handler(newSettings) {
-          this.$emit('settingsChanged',newSettings);
-        }
-      }
-    },
-    methods: {
-      handleMouseOver(event, description) {
-        this.tooltipContent = description;
-
-        const elementRect = event.target.getBoundingClientRect();
-        const tooltipWidth = 280;
-        const gap = 20;
-
-        let leftPos = elementRect.left - tooltipWidth - gap;
-
-        if (leftPos < 0) {
-          leftPos = gap; 
-        }
-
-        const topPos = elementRect.top + window.scrollY + (elementRect.height / 2) - 50;
-
-        this.tooltipPosition = { left: leftPos, top: topPos };
-        this.isTooltipVisible = true;
-              },
-
-      handleMouseLeave() {
-        this. isTooltipVisible = false;
-      }
-    }
   };
-  </script>
+</script>
   
 <style scoped>
   .settings-panel {
@@ -284,6 +330,26 @@
   .setting input[type=range]::-ms-fill-lower,
   .setting input[type=range]::-ms-fill-upper {
     background: transparent;
+  }
+
+  .setting select[multiple] {
+  width: 100%;
+  height: auto; 
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #c5c5d2;
+  background-color: white;
+  cursor: pointer;
+  overflow-y: auto; 
+}
+  .setting select[multiple] option {
+    padding: 4px; 
+    border-bottom: 1px solid #eee; 
+  }
+
+  .setting select[multiple] option.selected {
+    background-color: #4CAF50; 
+    color: white;
   }
 </style>
   

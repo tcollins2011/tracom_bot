@@ -6,6 +6,7 @@
     <div class="home-chatBot">
       <chatBot :modelSettings="currentSettings" :systemMessage="activePrompt"/>
     </div>
+  
     
 </template>
   

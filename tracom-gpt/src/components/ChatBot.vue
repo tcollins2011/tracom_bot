@@ -9,6 +9,7 @@
               <div class="text" v-html="processText(message.text)"></div>
           </div>
         </div>
+        <HelpfulButton v-if="message.sender === 'Social Style AI Assistant' && message.responseComplete" :response="message.text" :question="messages[index - 1]?.text" :model="modelSettings.model" :context="message.embedding.text"/>
         <embedding-accordion v-if="message.sender === 'Social Style AI Assistant' && message.embedding.text && showAccordion" :embedding="message.embedding"></embedding-accordion>
       </div>
     </div>
@@ -32,11 +33,13 @@
 
 <script>
 import EmbeddingAccordion from './EmbeddingAccordion.vue';
+import HelpfulButton from './HelpfulButton.vue';
 import DOMPurify from 'dompurify';
 
 export default {
   name: 'UserInputDisplay',
   components: {
+    HelpfulButton,
     EmbeddingAccordion,
   },
   props: {
@@ -105,6 +108,7 @@ export default {
           const read = async () => {
             const { done, value } = await reader.read();
             if (done) {
+              this.messages[botMessageIndex].responseComplete = true;
               const fullInput = this.userInput + this.embeddingText + this.systemMessage
               const tokenInfo = await this.countTokens(fullInput, this.messages[botMessageIndex].text, this.modelSettings)
               this.$emit('apiResponse', {
@@ -179,6 +183,7 @@ export default {
         sender: sender,
         img: sender === 'You' ? require('@/assets/tracom_profile.png') : require('@/assets/gpt_profile.png'),
         embedding: {},
+        responseComplete: false,
       };
       this.messages.push(message);
 
