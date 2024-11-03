@@ -10,9 +10,9 @@ export default createStore({
         noEmbeddings:  prompts.noEmbeddings.join("\n"),
       },
       currentSettings: {
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o',
         temperature: 1,
-        maxTokens: 4096,
+        maxTokens: 16384,
         topP: 1,
         frequencyPenalty: 0,
         presencePenalty: 0,

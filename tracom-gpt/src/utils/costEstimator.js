@@ -9,15 +9,18 @@
 function estimateCost(modelName,inputTokens, outputTokens) {
 
     const prices = {
-        'gpt-3.5-turbo' : {'input' : 0.0000005, 'output' : 0.0000015},
-        'gpt-4-turbo-preview' : {'input' : 0.00001, 'output' : 0.00003}
+        'gpt-3.5-turbo' : {'input' : 5, 'output' : 15},
+        'gpt-4-turbo' : {'input' : 10, 'output' : 30},
+        'gpt-4o' : {'input' : 2.50 , 'output' : 10},
+        'o1-mini' : {'input' : 3, 'output' : 12},
+        'o1-preview' : {'input' : 15, 'output' : 60},
     }
 
     if (!prices[modelName]) {
         throw new Error(`Pricing information for model ${modelName} not found.`);
       }
 
-    const cost = (inputTokens * prices[modelName].input) + (outputTokens * prices[modelName].output);
+    const cost = (inputTokens * (prices[modelName].input / 1000000)) + (outputTokens * (prices[modelName].output / 1000000));
 
     return cost;
   }
