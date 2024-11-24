@@ -18,9 +18,19 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-// Create the feedback table if it doesn't exist
+// Create the feedback table with new columns if it doesn't exist
 db.serialize(() => {
-  db.run("CREATE TABLE IF NOT EXISTS feedback (id INTEGER PRIMARY KEY AUTOINCREMENT, answerId INTEGER, helpful BOOLEAN)");
+  db.run(`
+    CREATE TABLE IF NOT EXISTS feedback (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      helpful BOOLEAN,
+      response TEXT,
+      question TEXT,
+      context TEXT,
+      model TEXT,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 });
 
 export default db;
