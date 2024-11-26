@@ -10,8 +10,8 @@
           <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
           <option value="gpt-4-turbo">gpt-4-turbo</option>
           <option value="gpt-4o">gpt-4o</option>
-          <!-- <option value="o1-mini">o1-mini</option>
-          <option value="o1-preview">o1-preview</option> -->
+          <option value="o1-mini">o1-mini</option>
+          <option value="o1-preview">o1-preview</option>
         </select>
       </div>
       <div class="setting" v-for="setting in settingsList" :key="setting.name">
@@ -79,7 +79,7 @@
           settings: {
             model: 'gpt-4o',
             temperature: 1,
-            maxTokens: 16384,
+            maxTokens: 65536,
             topP: 1,
             frequencyPenalty: 0,
             presencePenalty: 0,
@@ -93,7 +93,7 @@
           },
           settingsList: [
               { name: 'temperature', label: 'Temperature', type: 'number', min: 0, max: 2, step: 0.01, description: 'Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive.'},
-              { name: 'maxTokens', label: 'Max tokens', type: 'number', min: 1, max: 16384, step: 1, description: 'The maximum number of tokens to generate shared between the prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for standard English text.)' },
+              { name: 'maxTokens', label: 'Max tokens', type: 'number', min: 1, max: 65536, step: 1, description: 'The maximum number of tokens to generate shared between the prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for standard English text.)' },
               { name: 'topP', label: 'Top P', type: 'number', min: 0, max: 1, step: 0.01, description: 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.' },
               { name: 'frequencyPenalty', label: 'Frequency penalty', type: 'number', min: 0, max: 2, step: 0.01, description: "How much to penalize new tokens based on their existing frequency in the text so far. Decreases the model's likelihood to repeat the same line verbatim."},
               { name: 'presencePenalty', label: 'Presence penalty', type: 'number', min: 0, max: 2, step: 0.01, description: "How much to penalize new tokens based on whether they appear in the text so far. Increases the model's likelihood to talk about new topics."},
