@@ -1,4 +1,5 @@
-import sqlite3 from 'sqlite3';
+// db.js
+import { Pool } from 'pg';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -6,31 +7,34 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Define the path for the persistent database file
-const dbPath = path.resolve(__dirname, 'feedback.db');
+// PostgreSQL connection pool configuration
+const pool = new Pool({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
 
-// Create and open the database connection
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Could not open database', err);
-  } else {
-    console.log('Connected to SQLite database');
+// Create the feedback table if it doesn't exist
+(async () => {
+  try {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS feedback (
+        id SERIAL PRIMARY KEY,
+        helpful BOOLEAN NOT NULL,
+        response TEXT,
+        question TEXT,
+        context TEXT,
+        model TEXT,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+    await pool.query(createTableQuery);
+    console.log('Connected to PostgreSQL and ensured table exists');
+  } catch (err) {
+    console.error('Error setting up PostgreSQL database:', err);
   }
-});
+})();
 
-// Create the feedback table with new columns if it doesn't exist
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS feedback (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      helpful BOOLEAN,
-      response TEXT,
-      question TEXT,
-      context TEXT,
-      model TEXT,
-      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-});
-
-export default db;
+export default pool;
