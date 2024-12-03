@@ -1,92 +1,278 @@
 <template>
-  <div class="chat-with-details">
+  <div class="main-container">
     <div class="custom-prompt-container">
       <CustomPrompt />
     </div>
-    <div class="chat-container">
-      <Chatbot :modelSettings="currentSettings" :show-accordion="true" :systemMessage="activePrompt" @apiResponse="handleApiResponse" />
+    <div class="content-container">
+      <div class="model-settings-container">
+        <h2 class="settings-title">Model A Settings</h2>
+        <ModelSettings @settingsChanged="handleSettingsChange('ModelA')" />>
+      </div>
+      <div class="chat-wrapper">
+        <div class="chat-container">
+          <div class="chatbot">
+            <h2 class="chat-title">Chatbot A</h2>
+            <Chatbot
+              :modelSettings="currentSettingsModelA"
+              :show-accordion="true"
+              :systemMessage="activePrompt"
+              :inputEnabled="false"
+              ref="chatbotA"
+            />
+          </div>
+          <div class="chatbot">
+            <h2 class="chat-title">Chatbot B</h2>
+            <Chatbot
+              :modelSettings="currentSettingsModelB"
+              :show-accordion="true"
+              :systemMessage="activePrompt"
+              :inputEnabled="false"
+              ref="chatbotB"
+            />
+          </div>
+        </div>
+        <div class="shared-input-container">
+          <div class="input-wrapper">
+            <div class="input-flex-container">
+              <textarea
+                ref="userInput"
+                v-model="userInput"
+                placeholder="Ask your Social Style AI Assistant..."
+                class="user-input"
+                @keyup.enter.prevent="submitComparison"
+                @input="autoExpand"
+                :disabled="isLoading"
+              ></textarea>
+              <div v-if="isLoading" class="spinner"></div>
+            </div>
+            <button
+              v-if="!isLoading"
+              class="submit-button"
+              @click="submitComparison"
+            ></button>
+        </div>
     </div>
-    <div class="model-settings-container">
-      <ModelSettings @settingsChanged="handleSettingsChange" />
-      <RunningCosts :lastSubmissionTokens="lastSubmissionTokens"/>
+      </div>
+      <div class="model-settings-container">
+        <h2 class="settings-title">Model B Settings</h2>
+        <ModelSettings @settingsChanged="handleSettingsChange('ModelB')" />
+      </div>
     </div>
   </div>
 </template>
-  
-  <script>
-  import { mapGetters, mapMutations, mapState } from 'vuex'
+
+<script>
+import { mapGetters, mapState } from 'vuex'
   import Chatbot from '@/components/ChatBot.vue';
   import ModelSettings from '@/components/ModelSettings.vue'
   import CustomPrompt from '@/components/CustomPrompt.vue'
-  import RunningCosts from '@/components/RunningCosts.vue'
-  import estimateCost from '@/utils/costEstimator';
   
   export default {
     components: {
       ModelSettings,
       Chatbot,
       CustomPrompt,
-      RunningCosts,
-    },
-    computed: {
-      ...mapState(['currentSettings']), 
-      ...mapGetters(['activePrompt']),
     },
     data() {
-      return {
-        lastSubmissionTokens: {
-          inputTokens: 0,
-          outputTokens: 0,
-          totalTokens: 0,
-          cost: 0,
-        },
+    return { 
+        userInput: '',
+        isLoading: false, 
       };
     },
+    computed: {
+      ...mapState(['currentSettingsModelA', 'currentSettingsModelB']), 
+      ...mapGetters(['activePrompt']),
+    },
     methods: {
-      ...mapMutations(['toggleEmbeddingsEnabled']),
-      handleApiResponse(details) {
-        this.lastSubmissionTokens.inputTokens = details.inputTokens;
-        this.lastSubmissionTokens.outputTokens = details.outputTokens;
-        this.lastSubmissionTokens.totalTokens = details.outputTokens + details.inputTokens
-        this.lastSubmissionTokens.cost = estimateCost( this.currentSettings.model, details.outputTokens, details.inputTokens)
+      async submitComparison() {
+        if (this.userInput.trim()) {
+          try {
+            this.isLoading = true;
+            // Call the recieveExternalInput method for both chatbots
+            await Promise.all([
+              this.$refs.chatbotA.recieveExternalInput(this.userInput),
+              this.$refs.chatbotB.recieveExternalInput(this.userInput),
+            ]);
+          } catch (error) {
+            console.error('Error during comparison submission:', error);
+          } finally {
+            this.isLoading = false;
+            this.userInput = ''; 
+          }
+        }
       },
-      handleSettingsChange(newSettings) {
-        this.$store.commit('updateSettings', newSettings);
+      autoExpand(event) {
+        const textarea = event.target;
+        textarea.style.height = 'auto';
+        if (textarea.scrollHeight > textarea.clientHeight) {
+          textarea.style.height = `${textarea.scrollHeight}px`;
+        }
+      },
+      handleSettingsChange(modelKey) {
+        return (newSettings) => {
+          const mutationKey = modelKey === 'ModelA' ? 'updateModelASettings' : 'updateModelBSettings';
+          this.$store.commit('updateModelSettings', { mutationKey, newSettings });
+        };
       },
     },
   };
   </script>
-  
-<style>
-  .chat-with-details {
-    display: flex;
-    margin-top: 10vh;
-    align-items: stretch; 
-    gap: 20px;
-    max-width: 100vw;
-    padding-left: 20px;
-    padding-right: 20px;
-    box-sizing: border-box;
-    height: 88vh;
+
+<style scoped>
+/* Main container stacks the custom prompt on top */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Custom prompt spans across the top */
+.custom-prompt-container {
+  flex: 0 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  height: 10vh; /* Adjust as needed */
+  min-height: 180px;
+}
+
+/* Content container holds the settings and chat wrapper */
+.content-container {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  padding: 20px;
+  gap: 20px;
+  overflow: hidden; /* Prevent scrollbars from appearing */
+}
+
+/* Model settings on the left and right */
+.model-settings-container {
+  flex: 0 0 200px;
+  min-width: 200px;
+  max-width: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Chat wrapper to hold chat container and shared input */
+.chat-wrapper {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Chat container with two chatbots side by side */
+.chat-container {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+}
+
+/* Each chatbot */
+.chatbot {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Titles for chatbots */
+.chat-title {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Updated shared input container */
+.shared-input-container {
+  flex: 0 0 auto;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-top: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+/* Wrapper for input field */
+.input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+  width: 100%;
+}
+
+/* Flex container for input */
+.input-flex-container {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+/* Input field styling */
+.user-input {
+  width: 100%;
+  min-height: 20px;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  resize: none;
+  overflow-y: hidden;
+  font-size: 16px;
+  padding: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+
+/* Submit button styling */
+.submit-button {
+  margin-left: 0.5rem; 
+  margin-bottom: 1.25rem;
+  padding: 0.5rem 1rem; 
+  cursor: pointer;
+  background: url('@/assets/up-arrow.svg') no-repeat center center; 
+  border: none;
+  outline: none;
+  background-size: 50%; 
+}
+
+/* Spinner for loading state */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #09f;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: spin 1s infinite linear;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% {
+    transform: translateY(-50%) rotate(0deg);
   }
-  
-  .custom-prompt-container {
-    flex: 0 0 20%; 
-    min-width: 0;
+  100% {
+    transform: translateY(-50%) rotate(360deg);
   }
-  
-  .chat-container {
-    flex: 4;
-    min-width: 0;
-  }
-  
-  .model-settings-container {
-    display: flex;
-    flex: 0 1 auto;
-    flex-direction: column;
-    min-width: 250px;
-    max-width: 300px
-  }
-  
+}
+
+/* Additional styling */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
 </style>
-  
