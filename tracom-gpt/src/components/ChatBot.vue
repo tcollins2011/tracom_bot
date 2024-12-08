@@ -13,7 +13,7 @@
         <embedding-accordion v-if="message.sender === 'Social Style AI Assistant' && message.embedding.text && showAccordion" :embedding="message.embedding"></embedding-accordion>
       </div>
     </div>
-    <div class="input-wrapper">
+    <div v-if="inputEnabled" class="input-wrapper">
       <div class="input-flex-container">
         <textarea
           ref="userInput"
@@ -54,7 +54,11 @@ export default {
     systemMessage: {
       type: String,
       default: ""
-    }
+    },
+    inputEnabled: {
+      type: Boolean,
+      default: true
+    },
   },
   updated() {
     const displayTextElement = this.$refs.displayText;
@@ -203,7 +207,13 @@ export default {
     processText(text) {
       const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       return DOMPurify.sanitize(html);
-    }
+    },
+    async recieveExternalInput(input) {
+      if (input.trim()) {
+        this.userInput = input;
+        await this.submitText();
+      }
+    },
   },
 };
 </script>

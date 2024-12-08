@@ -19,6 +19,26 @@ export default createStore({
         chatEnabled: false,
         embeddingsEnabled: true,
       },
+      currentSettingsModelA: {
+        model: 'gpt-4o',
+        temperature: 1,
+        maxTokens: 16384,
+        topP: 1,
+        frequencyPenalty: 0,
+        presencePenalty: 0,
+        chatEnabled: false,
+        embeddingsEnabled: true,
+      },
+      currentSettingsModelB: {
+        model: 'gpt-4o',
+        temperature: 1,
+        maxTokens: 16384,
+        topP: 1,
+        frequencyPenalty: 0,
+        presencePenalty: 0,
+        chatEnabled: false,
+        embeddingsEnabled: true,
+      },
     };
   },
   getters: {
@@ -36,6 +56,12 @@ export default createStore({
     },
     updateSettings(state, newSettings) {
       state.currentSettings = { ...state.currentSettings, ...newSettings };
-    }, 
+    },
+    updateModelASettings(state, newSettings) {
+      state.currentSettingsModelA = { ...state.currentSettingsModelA, ...newSettings };
+    },
+    updateModelBSettings(state, newSettings) {
+      state.currentSettingsModelB = { ...state.currentSettingsModelB, ...newSettings };
+    },
   }, 
 });
