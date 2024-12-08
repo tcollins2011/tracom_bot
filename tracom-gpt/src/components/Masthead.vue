@@ -6,7 +6,8 @@
       <nav class="nav-links">
         <ul>
           <li><router-link to="/">User View</router-link></li>
-          <li><router-link to="/detailed-analysis">Detailed View</router-link></li>
+          <li><router-link to="/detailed-analysis">Sandbox View</router-link></li>
+          <li><router-link to="/model-comparison">Model Comparison</router-link></li>
         </ul>
       </nav>
     </header>

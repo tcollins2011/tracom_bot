@@ -9,7 +9,7 @@
 function estimateCost(modelName,inputTokens, outputTokens) {
 
     const prices = {
-        'gpt-3.5-turbo' : {'input' : 5, 'output' : 15},
+        'gpt-3.5-turbo' : {'input' : 0.5, 'output' : 1.50},
         'gpt-4-turbo' : {'input' : 10, 'output' : 30},
         'gpt-4o' : {'input' : 2.50 , 'output' : 10},
         'o1-mini' : {'input' : 3, 'output' : 12},
