@@ -6,7 +6,7 @@
     <div class="content-container">
       <div class="model-settings-container">
         <h2 class="settings-title">Model A Settings</h2>
-        <ModelSettings @settingsChanged="handleSettingsChange('ModelA')" />>
+        <ModelSettings :modelSettings="currentSettingsModelA" @settingsChanged="(newSettings) => handleSettingsChange('ModelA', newSettings)" />
       </div>
       <div class="chat-wrapper">
         <div class="chat-container">
@@ -55,7 +55,7 @@
       </div>
       <div class="model-settings-container">
         <h2 class="settings-title">Model B Settings</h2>
-        <ModelSettings @settingsChanged="handleSettingsChange('ModelB')" />
+        <ModelSettings :modelSettings="currentSettingsModelB" @settingsChanged="(newSettings) => handleSettingsChange('ModelB', newSettings)" />
       </div>
     </div>
   </div>
@@ -108,15 +108,16 @@ import { mapGetters, mapState } from 'vuex'
           textarea.style.height = `${textarea.scrollHeight}px`;
         }
       },
-      handleSettingsChange(modelKey) {
-        return (newSettings) => {
-          const mutationKey = modelKey === 'ModelA' ? 'updateModelASettings' : 'updateModelBSettings';
-          this.$store.commit('updateModelSettings', { mutationKey, newSettings });
-        };
+      handleSettingsChange(modelKey, newSettings) {
+        const mutationKey =
+          modelKey === 'ModelA'
+            ? 'updateModelASettings'
+            : 'updateModelBSettings';
+        this.$store.commit(mutationKey, newSettings);
       },
     },
   };
-  </script>
+</script>
 
 <style scoped>
 /* Main container stacks the custom prompt on top */
