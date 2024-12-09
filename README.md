@@ -20,14 +20,11 @@ Tracom GPT is a web-based tool designed to test various configurations of OpenAI
 2. **Install PostgreSQL**:
    - [Download and Install PostgreSQL](https://www.postgresql.org/download/)
    - Create a database to be used by the backend. For example:
-     ```
 
 2. **Clone the Repository**:
    ```bash
    git clone https://github.com/your-repository/tracom-gpt.git
-   cd tracom-gpt
    ```
-
 ---
 
 ### **Environment Variables**
@@ -146,9 +143,26 @@ Alternatively, you can start the services separately:
 .
 ├── backend/              # Node.js backend for API handling
 │   ├── server.js         # Backend server entry point
+|   ├── src/              # Backend source code
+|       ├──api/           # Contains the routes and endpoints for handling API requests.
+|       ├──controllers/   # Contains the logic for processing requests from routes 
+|       ├──db/            # Houses code related to database management and queries
+|       ├──services/      # Contains services that encapsulate complex operations
+|       ├──utilities/     #  Holds common utility functions
+│   └── static/           # Holds book PDFs for embeddings
 │   └── .env              # Backend environment variables
 ├── tracom-gpt/           # Vue.js frontend for the application
+│   ├── public/           # Contains publicly accessible static files such as `index.html`, images, and the app’s favicon
 │   ├── src/              # Frontend source code
+|       ├──assets/        # Stores static assets
+|       ├──components/    # Contains reusable Vue components
+|       ├──data/          # Contains static or dynamic data files
+|       ├──router/        # Contains the Vue Router setup for defining and managing application routes
+|       ├──store/         # Contains the Vuex store for state management
+|       ├──utils/         # Contains utility functions
+|       ├──views/         # Contains page-level Vue components
+|       ├──App.vue        # The root Vue component
+|       ├──main.js        # The main entry file
 │   └── .env              # Frontend environment variables
 └── README.md             # Project documentation
 ```
