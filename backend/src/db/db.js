@@ -8,51 +8,54 @@ const { Pool, Client } = pkg;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// PostgreSQL connection to the default 'postgres' database
-const adminClient = new Client({
-  user: 'postgres',
-  host: '127.0.0.1',
-  database: 'postgres', // Default database
-  password: 'k!rby0414',
-  port: 5432,
-});
-
-// Target database configuration
+// Target database name for local use
 const targetDatabase = 'feedback';
+
+// Use the DATABASE_URL from the environment variable (Heroku) or fallback to local settings
 const pool = new Pool({
-  user: 'postgres',
-  host: '127.0.0.1',
-  database: targetDatabase,
-  password: 'k!rby0414',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL || `postgresql://postgres:k!rby0414@127.0.0.1:5432/${targetDatabase}`,
+  ssl: process.env.DATABASE_URL
+    ? { rejectUnauthorized: false } // Required for Heroku
+    : false, // Disabled for local connections
 });
 
 (async () => {
-  try {
-    // Connect to the default 'postgres' database
-    await adminClient.connect();
-    console.log('Connected to PostgreSQL admin database');
+  // If running locally, ensure the database exists
+  if (!process.env.DATABASE_URL) {
+    const adminClient = new Client({
+      user: 'postgres',
+      host: '127.0.0.1',
+      database: 'postgres', 
+      password: 'k!rby0414',
+      port: 5432,
+    });
 
-    // Check if the target database exists
-    const dbExistsQuery = `
-      SELECT 1 FROM pg_database WHERE datname = $1;
-    `;
-    const dbExistsResult = await adminClient.query(dbExistsQuery, [targetDatabase]);
+    try {
+      // Connect to the default 'postgres' database
+      await adminClient.connect();
+      console.log('Connected to PostgreSQL admin database');
 
-    // Create the target database if it doesn't exist
-    if (dbExistsResult.rowCount === 0) {
-      console.log(`Database "${targetDatabase}" does not exist. Creating it...`);
-      const createDbQuery = `CREATE DATABASE ${targetDatabase};`;
-      await adminClient.query(createDbQuery);
-      console.log(`Database "${targetDatabase}" created successfully.`);
-    } else {
-      console.log(`Database "${targetDatabase}" already exists.`);
+      // Check if the target database exists
+      const dbExistsQuery = `
+        SELECT 1 FROM pg_database WHERE datname = $1;
+      `;
+      const dbExistsResult = await adminClient.query(dbExistsQuery, [targetDatabase]);
+
+      // Create the target database if it doesn't exist
+      if (dbExistsResult.rowCount === 0) {
+        console.log(`Database "${targetDatabase}" does not exist. Creating it...`);
+        const createDbQuery = `CREATE DATABASE ${targetDatabase};`;
+        await adminClient.query(createDbQuery);
+        console.log(`Database "${targetDatabase}" created successfully.`);
+      } else {
+        console.log(`Database "${targetDatabase}" already exists.`);
+      }
+    } catch (err) {
+      console.error('Error setting up PostgreSQL database:', err.message, err.stack);
+    } finally {
+      // Close the admin connection
+      await adminClient.end();
     }
-  } catch (err) {
-    console.error('Error setting up PostgreSQL database:', err.message, err.stack);
-  } finally {
-    // Close the admin connection
-    await adminClient.end();
   }
 
   // Ensure the `feedback` table exists
@@ -76,3 +79,4 @@ const pool = new Pool({
 })();
 
 export default pool;
+
