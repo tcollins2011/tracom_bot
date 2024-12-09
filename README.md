@@ -7,7 +7,7 @@ Tracom GPT is a web-based tool designed to test various configurations of OpenAI
 ## **Features**
 - **Dynamic API Testing**: Test OpenAI API configurations in real-time.
 - **Embeddings Integration**: Experiment with embeddings for customized results.
-- **Multi-API Support**: Incorporates OpenAI, Pinecone, and a database for advanced functionality.
+- **Multi-API Support**: Incorporates OpenAI, Pinecone, and a PostgreSQL database for advanced functionality.
 
 ---
 
@@ -17,6 +17,10 @@ Tracom GPT is a web-based tool designed to test various configurations of OpenAI
 1. **Install Node.js**:
    - [Download and Install Node.js](https://nodejs.org/)
    - Ensure `npm` is installed alongside Node.js.
+2. **Install PostgreSQL**:
+   - [Download and Install PostgreSQL](https://www.postgresql.org/download/)
+   - Create a database to be used by the backend. For example:
+     ```
 
 2. **Clone the Repository**:
    ```bash
@@ -57,20 +61,22 @@ To run this project, you need to set up the following environment variables in t
    OPENAI_API_KEY=your-openai-api-key
    PINECONE_API_KEY=your-pinecone-api-key
    DATABASE_URL=your-database-url
+   PG_USER=your-postgres-username
+   PG_HOST=your-postgres-host
+   PG_PASSWORD=your-postgres-password
+   PG_PORT=your-postgres-port
+   PG_DB_NAME=your-database-name
    ```
 
-**Note**: Replace `your-openai-api-key`, `your-pinecone-api-key`, and `your-database-url` with your actual keys and database connection string.
+**Note**: Replace `your-openai-api-key`, `your-pinecone-api-key`, and `others` with your actual keys and database connection string.
 
 ---
 
 ### **Installation**
 1. Navigate to the project root directory.
-2. Install dependencies for both the frontend and backend:
+2. Install dependencies for both the frontend and backend, as well as set up the database:
    ```bash
-   npm install
-   cd backend && npm install
-   cd ../tracom-gpt && npm install
-   ```
+   npm run install-all
 
 ---
 
@@ -124,9 +130,13 @@ Alternatively, you can start the services separately:
   ```
 
 #### **Backend**
+- **Install Dependencies**:
+  ```bash
+  npm install
+  ```
 - **Start the Server**:
   ```bash
-  node server.js
+  npm run start
   ```
 
 ---
@@ -150,5 +160,3 @@ Alternatively, you can start the services separately:
 ### **Contributors**
 - [Tyler Collins]
 ```
-
-This markdown file is ready to be used as your `README.md`. It follows standard markdown syntax with proper formatting for headings, code blocks, and bullet points. Let me know if there’s anything else you’d like to add or revise!

@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "start": "node server.js"
+    "start": "node server.js",
+    "setup-db": "node db.js"
   },
   "keywords": [],
   "author": "",

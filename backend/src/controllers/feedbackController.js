@@ -1,10 +1,10 @@
 import pool from '../db/db.js';
-import Joi from 'joi'; // Install Joi if not already installed
+import Joi from 'joi'; 
 
 // Define the schema for request validation
 const feedbackSchema = Joi.object({
   helpful: Joi.boolean().required(),
-  response: Joi.string().allow(null, ''), // Optional, allows null or empty string
+  response: Joi.string().allow(null, ''), 
   question: Joi.string().allow(null, ''),
   context: Joi.string().allow(null, ''),
   model: Joi.string().allow(null, ''),
