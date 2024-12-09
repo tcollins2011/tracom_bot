@@ -1,17 +1,26 @@
-// feedbackController.js
 import pool from '../db/db.js';
+import Joi from 'joi'; // Install Joi if not already installed
+
+// Define the schema for request validation
+const feedbackSchema = Joi.object({
+  helpful: Joi.boolean().required(),
+  response: Joi.string().allow(null, ''), // Optional, allows null or empty string
+  question: Joi.string().allow(null, ''),
+  context: Joi.string().allow(null, ''),
+  model: Joi.string().allow(null, ''),
+});
 
 // Controller function to handle feedback submission
 export const feedBack = async (req, res) => {
-  const { helpful, response = null, question = null, context = null, model = null } = req.body;
+  const { error, value } = feedbackSchema.validate(req.body);
 
-  // Validate incoming data
-  if (typeof helpful !== 'boolean') {
-    return res.status(400).send('Invalid data');
+  if (error) {
+    return res.status(400).json({ error: `Validation error: ${error.message}` });
   }
 
+  const { helpful, response, question, context, model } = value;
+
   try {
-    // Insert feedback into the database, allowing some fields to be optional
     const query = `
       INSERT INTO feedback (helpful, response, question, context, model)
       VALUES ($1, $2, $3, $4, $5)
@@ -20,9 +29,19 @@ export const feedBack = async (req, res) => {
     const values = [helpful, response, question, context, model];
 
     const result = await pool.query(query, values);
-    res.status(200).send(`Feedback submitted successfully with ID: ${result.rows[0].id}`);
+
+    res.status(200).json({
+      message: 'Feedback submitted successfully',
+      id: result.rows[0].id,
+    });
   } catch (err) {
     console.error('Database error:', err);
-    res.status(500).send('Failed to save feedback');
+
+    // Specific PostgreSQL error handling
+    if (err.code === '23505') {
+      res.status(409).json({ error: 'Duplicate entry' });
+    } else {
+      res.status(500).json({ error: 'Failed to save feedback' });
+    }
   }
 };
