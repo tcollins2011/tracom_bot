@@ -1,7 +1,11 @@
+
 import { processPdf } from './simplePdfProcessingService.js';
 import PineconeManager from './pineconeService.js';
 import { embed } from './embeddingService.js';
 
+/**
+ * Service for processing and upserting PDF documents into a Pinecone index.
+ */
 class DocumentEmbeddingService {
   constructor(indexName) {
     this.pineconeManager = new PineconeManager(indexName);

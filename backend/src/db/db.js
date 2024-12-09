@@ -4,11 +4,9 @@ import { fileURLToPath } from 'url';
 
 const { Pool, Client } = pkg;
 
-// Resolve the __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 const {
   DATABASE_URL,
   PG_USER = 'postgres',
@@ -21,7 +19,6 @@ const {
 // Use DATABASE_URL for Heroku or local connection details
 const connectionString = DATABASE_URL || `postgresql://${PG_USER}:${PG_PASSWORD}@${PG_HOST}:${PG_PORT}/${PG_DB_NAME}`;
 
-// Initialize Pool
 const pool = new Pool({
   connectionString,
   ssl: DATABASE_URL ? { rejectUnauthorized: false } : false, 

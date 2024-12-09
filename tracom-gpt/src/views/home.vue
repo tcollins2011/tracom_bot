@@ -29,7 +29,6 @@
 </script>
 
 <style scoped>
-
 .home-chatBot{
   height: 70vh;
   width: 60%;

@@ -1,6 +1,19 @@
 import { embed } from '../services/embeddingService.js'
 import PineconeManager from '../services/pineconeService.js'
 
+/**
+ * Handles the request to retrieve relevant embeddings based on the provided prompt.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The body of the request.
+ * @param {string} req.body.prompt - The prompt to generate embeddings for.
+ * @param {Object} req.body.settings - Additional settings for the request.
+ * @param {Object} res - The response object.
+ * 
+ * @returns {Promise<void>} - A promise that resolves when the response is sent.
+ * 
+ * @throws {Error} - Throws an error if there is an issue retrieving the embeddings.
+ */
 export const relevantEmbedding = async (req,res) => {
 
     const { prompt, settings } = req.body;

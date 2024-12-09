@@ -1,6 +1,21 @@
 import { getDocument } from 'pdfjs-dist/build/pdf.mjs';
 import path from 'path';
 
+/**
+ * Processes a PDF file and splits its text content into chunks.
+ * Each chunk contains a specified number of words, with some overlap between chunks.
+ * The function returns an array of chunk objects, each containing metadata about the chunk.
+ *
+ * @param {string} pdfPath - The path to the PDF file to be processed.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of chunk objects.
+ * Each chunk object contains the following properties:
+ *   - id: A unique identifier for the chunk.
+ *   - metadata: An object containing metadata about the chunk, including:
+ *     - fileName: The name of the PDF file.
+ *     - startPage: The starting page number of the chunk.
+ *     - endPage: The ending page number of the chunk.
+ *     - text: The text content of the chunk.
+ */
 export async function processPdf(pdfPath) {
     const loadingTask = getDocument(pdfPath);
     const pdf = await loadingTask.promise;

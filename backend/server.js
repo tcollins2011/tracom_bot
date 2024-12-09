@@ -28,12 +28,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the Express backend!' });
 });
 
-// Use the routes with a specific base path
 app.use('/openai', openAIRoutes);
 app.use('/pdf', pdfRoutes);
 app.use('/feedback', feedbackRoutes);
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');

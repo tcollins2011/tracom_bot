@@ -10,7 +10,6 @@ const feedbackSchema = Joi.object({
   model: Joi.string().allow(null, ''),
 });
 
-// Controller function to handle feedback submission
 export const feedBack = async (req, res) => {
   const { error, value } = feedbackSchema.validate(req.body);
 

@@ -1,5 +1,12 @@
 import { OpenAI } from 'openai';
 
+/**
+ * Generates an embedding for the given text using OpenAI's embedding model.
+ *
+ * @param {string} text - The text to be embedded.
+ * @returns {Promise<Object>} - A promise that resolves to the embedding object.
+ */
+
 export const embed = async (text) => {
     
     let openai

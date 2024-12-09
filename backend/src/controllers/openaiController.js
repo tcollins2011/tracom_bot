@@ -1,6 +1,10 @@
 import { OpenAI } from 'openai';
 
-let openai
+/**
+ * Generates text using the OpenAI API based on the provided prompt and settings.
+*/
+
+let openai;
 
 export const generateText = async (req, res) => {
 

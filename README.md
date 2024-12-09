@@ -169,8 +169,5 @@ Alternatively, you can start the services separately:
 
 ---
 
----
-
 ### **Contributors**
 - [Tyler Collins]
-```

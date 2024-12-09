@@ -88,7 +88,6 @@ import { mapGetters, mapState } from 'vuex'
         if (this.userInput.trim()) {
           try {
             this.isLoading = true;
-            // Call the recieveExternalInput method for both chatbots
             await Promise.all([
               this.$refs.chatbotA.recieveExternalInput(this.userInput),
               this.$refs.chatbotB.recieveExternalInput(this.userInput),
