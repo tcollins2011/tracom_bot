@@ -127,7 +127,7 @@ export default {
     updateDynamicRanges() {
       const modelRanges = {
         'gpt-3.5-turbo': { temperature: [0, 2], maxTokens: [1, 4096], topP: [0, 1], frequencyPenalty: [0, 2], presencePenalty: [0, 2] },
-        'gpt-4-turbo': { temperature: [0, 2], maxTokens: [1, 8192], topP: [0, 1], frequencyPenalty: [0, 2], presencePenalty: [0, 2] },
+        'gpt-4-turbo': { temperature: [0, 2], maxTokens: [1, 4096], topP: [0, 1], frequencyPenalty: [0, 2], presencePenalty: [0, 2] },
         'gpt-4o': { temperature: [0, 2], maxTokens: [1, 16384], topP: [0, 1], frequencyPenalty: [0, 2], presencePenalty: [0, 2] },
         'o1-mini': { temperature: [0, 2], maxTokens: [1, 16384], topP: [0, 1], frequencyPenalty: [0, 2], presencePenalty: [0, 2] },
         'o1-preview': { temperature: [0, 2], maxTokens: [1, 16384], topP: [0, 1], frequencyPenalty: [0, 2], presencePenalty: [0, 2] },
