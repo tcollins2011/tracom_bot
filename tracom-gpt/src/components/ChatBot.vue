@@ -83,7 +83,7 @@ export default {
         this.isLoading = true
         this.addMessage(this.userInput, 'You');
 
-        // Initialize an empty message for the bot response
+        // Initialize an empty message for the bot response this will be used later
         const botMessageIndex = this.addMessage('', 'Social Style AI Assistant');
         
 
@@ -96,7 +96,6 @@ export default {
             this.embeddingEndPage = embedding.endPage;
             this.embeddingText = embedding.contextText
           }
-
           const baseUrl = process.env.VUE_APP_API_BASE_URL; 
           const response = await fetch(`${baseUrl}/openai/generate-text`, {
             method: 'POST',
@@ -172,6 +171,7 @@ export default {
             body: JSON.stringify({ prompt: inputText, settings: modelSettings }),
         });
         if (!response.ok) {
+          console.log(baseUrl)
           throw new Error('Network response was not ok');
         }
         const data = await response.json()
